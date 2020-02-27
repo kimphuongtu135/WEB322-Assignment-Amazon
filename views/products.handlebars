@@ -1,0 +1,33 @@
+<div class="bigDiv">
+
+
+    {{#each productShow}}
+    <div class="container-product">
+
+        {{#if this.bestseller}}
+        <img class ="bs" src="/images/best.png" alt="bestseller" width="40" height="40">
+        {{/if}}
+
+        <img src="{{this.src}}" alt="{{this.name}}" width="200" height="200">
+
+
+
+        <div class="productInfor">
+            <p>
+                <span class="bold"> Name:</span> {{this.name}}
+            </p>
+
+            <p>
+                <span class="bold"> Category: </span>{{this.type}}
+            </p>
+
+            <p>
+                <span class="bold">Price:</span> {{this.price}}
+            </p>
+        </div>
+
+    </div>
+
+    {{/each}}
+
+</div>

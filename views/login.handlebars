@@ -1,0 +1,35 @@
+<!--Name: Kim Phuong Tu
+    Student ID: 148886179 -->
+
+<p>
+    {{message}}
+</p>
+
+
+<div class="customer">
+    <form action="/login" method="post">
+
+        <legend class="legend">Sign In</legend> <br>
+
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" value={{email}}>
+        
+        {{#each messages}}
+        <div class="errors">{{this}}</div>
+        {{/each}} 
+        
+        <br> <br>
+
+
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" placeholder="At least 6 chracters" value={{password}}>
+        
+        {{#each messages}}
+        <div class="errors">{{this}}</div>
+        {{/each}}
+        
+        <br> <br>
+
+        <input class="button" type="submit" value="Login">
+    </form>
+</div>

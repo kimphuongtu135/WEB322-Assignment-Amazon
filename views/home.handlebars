@@ -1,0 +1,45 @@
+<!--Name: Kim Phuong Tu
+    Student ID: 148886179 -->
+<div class="home">
+    <div class="promotion">
+        <a href="/products">
+            <img src="/images/offer.jpg" alt="promotion">
+        </a>
+    </div>
+
+
+    <div class="title">Categories</div>
+
+    <div class="categories">
+
+        {{#each categoriesShow}}
+        <div class="categoryItem">
+
+            <p class="titleItem">
+                {{this.name}}
+            </p>
+
+            <p>
+                <a href="/products">
+                    <img src="{{this.src}}" alt="{{this.name}}" height="200" width="200">
+                </a>
+            </p>
+
+        </div>
+
+        {{/each}}
+    </div>
+
+
+    <div class="title">Best Seller</div>
+
+    <div class="bestSeller">
+        {{#each bestsellerShow}}
+        <div class="bestSellerItem">
+            <p>
+                <img src="{{this.src}}" alt="{{this.name}}" width="200" height="200">
+            </p>
+        </div>
+        {{/each}}
+    </div>
+</div>
