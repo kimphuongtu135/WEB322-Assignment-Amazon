@@ -6,14 +6,34 @@
         <legend class="legend">Create Account</legend> <br>
 
         <label for="yname">Your name</label>
-        <input type="text" name="yname" id="yname"> <br>
+        <input type="text" name="yname" id="yname" value={{yname}}>
+        {{#each messages}}
+        <div class="errors">{{this.nameError}}</div>
+        {{/each}} 
+         <br><br>
 
         <label for="email">Email</label>
-        <input type="email" name="email" id="email"> <br>
+        <input type="email" name="email" id="email" value={{email}}>
+        {{#each messages}}
+        <div class="errors">{{this.emailError}}</div>
+        {{/each}} 
+         <br><br>
 
         <label for="password">Password</label>
-        <input type="password" name="password" id="password" placeholder="At least 6 characters"> <br> <br>
+        <input type="password" name="password" id="password" placeholder="At least 6 characters"
+        value={{password}} >
+        {{#each messages}}
+        <div class="errors">{{this.passError}}</div>
+        {{/each}} 
+         <br> <br>
 
+        <label for="passwordagain">Password Again</label>
+        <input type="password" name="passwordagain" id="passwordagain" placeholder="Please enter password again" value={{passwordagain}}>
+        {{#each messages}}
+        <div class="errors">{{this.passagainError}}</div>
+        {{/each}}
+        <br><br>
+        
         <input class="button" type="submit" value="Create your account">
        <p>Already have an account?<a href="/login"> Login</a></p> 
     </form>

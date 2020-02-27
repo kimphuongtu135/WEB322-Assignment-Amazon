@@ -133,6 +133,7 @@ select {
     border-radius: 4px;
     margin-bottom: 5px;
     color: black;
+    padding: 4px;
 }
 .legend{
     font-size: 20pt;
@@ -145,7 +146,6 @@ select {
     font-family: "Times New Roman", Times, serif;
     box-sizing: border-box;
     padding: 20px;
-    
     font-weight: bold;
    border-style: solid;
 }
@@ -154,13 +154,21 @@ select {
     border-radius: 4px;
     margin-bottom: 5px;
     color:black;
+    padding:4px;
 }
-#password{
-
+#passwordagain{
     width: 100%;
     border-radius: 4px;
     margin-bottom: 5px;
     color:black;
+    padding:4px;
+}
+#password{
+    width: 100%;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    color:black;
+    padding:4px;
 }
 .button {
     background-color: #3D4849;
@@ -214,6 +222,3 @@ select {
 .errors{
     color:red;
 }
-input:invalid {
-    background-color: red;
-  }
