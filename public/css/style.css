@@ -214,3 +214,6 @@ select {
 .errors{
     color:red;
 }
+input:invalid {
+    background-color: red;
+  }

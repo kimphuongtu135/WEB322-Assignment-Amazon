@@ -52,18 +52,18 @@ app.get("/products",(req,res)=>{
 
 });
 
-app.post("/login",(req,res)=>{     
+app.post("/login",(req,res)=>{    
     const errorMessages=[];
 
     if(req.body.email =="") 
     {
-            errorMessages.push("Enter your email");
+            errorMessages.push({emailError:"Enter your email"});
     }             
 
 
     if(req.body.password=="")
     {
-        errorMessages.push("Enter your password");
+        errorMessages.push({passError:"Enter your password"});
     }
 
 

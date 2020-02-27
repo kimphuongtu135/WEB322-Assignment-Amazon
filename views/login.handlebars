@@ -15,17 +15,17 @@
         <input type="email" name="email" id="email" value={{email}}>
         
         {{#each messages}}
-        <div class="errors">{{this}}</div>
+        <div class="errors">{{this.emailError}}</div>
         {{/each}} 
         
         <br> <br>
 
 
         <label for="password">Password</label>
-        <input type="password" name="password" id="password" placeholder="At least 6 chracters" value={{password}}>
+        <input type="password" name="password" id="password" placeholder="At least 6 chracters" value={{password}} required>
         
         {{#each messages}}
-        <div class="errors">{{this}}</div>
+        <div class="errors">{{this.passError}}</div>
         {{/each}}
         
         <br> <br>
