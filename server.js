@@ -141,6 +141,7 @@ app.post("/customer", (req, res) => {
             Customer email: ${email}
             `,
         };
+        
         sgMail.send(msg)
         .then(()=>{
             console.log(`Email sent`);
@@ -159,7 +160,7 @@ app.post("/customer", (req, res) => {
 
 
 
-const PORT = 9000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`SERVER CONNECTION`);
 })
