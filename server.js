@@ -130,7 +130,7 @@ app.post("/customer", (req, res) => {
     else {
         const {email,yname}=req.body;
         const sgMail = require('@sendgrid/mail');
-        sgMail.setApiKey("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");
+        sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
         const msg = {
             to: `${email}`,
             from: 'kimphuongtu135@gmail.com',
@@ -158,9 +158,7 @@ app.post("/customer", (req, res) => {
 
 });
 
-
-
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
     console.log(`SERVER CONNECTION`);
 })
