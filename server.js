@@ -5,6 +5,7 @@ const handlebars = require("express-handlebars");
 const productModel = require("./models/product");
 const categoriesModel = require("./models/categories");
 const bodyParser = require('body-parser');
+require('dotenv').config({path:"./config/keys.env"});
 
 const app = express();
 app.engine('handlebars', handlebars());
