@@ -98,6 +98,13 @@ app.post("/customer", (req, res) => {
         errorMessages.push({ nameError: "Enter your name with letter only" });
     }
 
+    if (req.body.ylname == "") {
+        errorMessages.push({ lnameError: "Enter your name" });
+    }
+    else if (!/[^0-9@$!%*#?&]{2,}$/.test(`${req.body.ylname}`)) {
+        errorMessages.push({ lnameError: "Enter your name with letter only" });
+    }
+
     if (req.body.email == "") {
         errorMessages.push({ emailError: "Enter your email" });
     }
@@ -122,6 +129,7 @@ app.post("/customer", (req, res) => {
             title: "Customer",
             messages: errorMessages,
             yname: req.body.yname,
+            ylname: req.body.ylname,
             email: req.body.email,
             password: req.body.password
         })
@@ -129,16 +137,15 @@ app.post("/customer", (req, res) => {
 
     // there is no error
     else {
-        const {email,yname}=req.body;
+        const {email,yname,ylname}=req.body;
         const sgMail = require('@sendgrid/mail');
         sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
         const msg = {
             to: `${email}`,
-            from: 'kimphuongtu135@gmail.com',
+            from: 'kptustore@gmail.com',
             subject: 'Register Customer Form',
-            text:`Your account is created. Thank you!`,
             html:`
-            Customer name: ${yname},
+            Customer name: ${yname} ${ylname},
             Customer email: ${email}
             `,
         };
