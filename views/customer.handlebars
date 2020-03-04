@@ -1,12 +1,11 @@
-<!--Name: Kim Phuong Tu
-    Student ID: 148886179 -->
+
 <div class="customer">
     <form action="/customer" method="post">
 
         <legend class="legend">Create Account</legend> <br>
 
         <label for="yname">Your name</label>
-        <input type="text" name="yname" id="yname" value={{yname}}>
+        <input type="text" name="yname" id="yname" value='{{yname}}'>
         {{#each messages}}
         <div class="errors">{{this.nameError}}</div>
         {{/each}} 

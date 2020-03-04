@@ -60,22 +60,18 @@ app.post("/login",(req,res)=>{
         errorMessages.push({emailError:"Enter your email"});
     }             
 
-
     if(req.body.password=="")
     {
         errorMessages.push({passError:"Enter your password"});
     }
-    
+       
 
-    
-   
-
-    //THere is an error
+    //There is an error
     if(errorMessages.length>0)
     {
         res.render("login",{
             title:"Login",
-            messages:errorMessages  ,             
+            messages:errorMessages ,             
             email: req.body.email,         
             password:req.body.password 
                       
@@ -87,7 +83,7 @@ app.post("/login",(req,res)=>{
     {
         res.render("login",{
             title:"Login",
-            message:`We will contact ${req.body.email}` 
+            message:`Login Success` 
          })
     }
     
@@ -101,7 +97,7 @@ app.post("/customer",(req,res)=>{
     {
         errorMessages.push({nameError:"Enter your name"});
     }
-    else if (!/^[a-zA-Z]{2,}$/.test(`${req.body.yname}`))
+    else if (!/[^0-9@$!%*#?&]{2,}$/.test(`${req.body.yname}`))
     {
         errorMessages.push({nameError:"Enter your name with letter only"});
     }   
@@ -137,16 +133,15 @@ app.post("/customer",(req,res)=>{
             yname: req.body.yname,         
             email: req.body.email,         
             password:req.body.password  
-                      
         })
     }
     
     // there is no error
     else
     {
-        res.render("customer",{
-            title:"Customer",
-            message:`We will contact ${req.body.email}` 
+        res.render("dashboard",{
+            title:"Dashboard",
+            message:`${req.body.email}` 
          })
     }
     
