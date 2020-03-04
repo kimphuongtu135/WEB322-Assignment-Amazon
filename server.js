@@ -1,13 +1,13 @@
 //Name: Kim Phuong Tu
 //StudentID: 148886179
 const express = require("express");
-const handlebars= require("express-handlebars");
-const productModel=require("./models/product");
-const categoriesModel=require("./models/categories");
+const handlebars = require("express-handlebars");
+const productModel = require("./models/product");
+const categoriesModel = require("./models/categories");
 const bodyParser = require('body-parser');
 
-const app= express();
-app.engine('handlebars',handlebars());
+const app = express();
+app.engine('handlebars', handlebars());
 app.set('view engine', 'handlebars');
 
 
@@ -15,142 +15,151 @@ app.use(express.static("public"));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
 
-    res.render("home",         
-    {
-        title: "Home",
-        categoriesShow: categoriesModel.getAllProduct(),
-        bestsellerShow: productModel.getBestSeller(),
-    })
+    res.render("home",
+        {
+            title: "Home",
+            categoriesShow: categoriesModel.getAllProduct(),
+            bestsellerShow: productModel.getBestSeller(),
+        })
 });
 
 
-app.get("/customer",(req,res)=>{
+app.get("/customer", (req, res) => {
     res.render("customer",
-    {
-        title: "Customer Registration"
-    })
-    
+        {
+            title: "Customer Registration"
+        })
+
 });
 
-app.get("/login",(req,res)=>{
+app.get("/login", (req, res) => {
     res.render("login",
-    {
-        title: "Login"
-    })
-    
+        {
+            title: "Login"
+        })
+
 });
 
-app.get("/products",(req,res)=>{
-        res.render("products",
+app.get("/products", (req, res) => {
+    res.render("products",
         {
             title: "Products",
             productShow: productModel.getAllProduct(),
-          
+
         })
 
 });
 
-app.post("/login",(req,res)=>{    
-    const errorMessages=[];
+app.post("/login", (req, res) => {
+    const errorMessages = [];
 
-    if(req.body.email =="") 
-    {
-        errorMessages.push({emailError:"Enter your email"});
-    }             
-
-    if(req.body.password=="")
-    {
-        errorMessages.push({passError:"Enter your password"});
+    if (req.body.email == "") {
+        errorMessages.push({ emailError: "Enter your email" });
     }
-       
+
+    if (req.body.password == "") {
+        errorMessages.push({ passError: "Enter your password" });
+    }
+
 
     //There is an error
-    if(errorMessages.length>0)
-    {
-        res.render("login",{
-            title:"Login",
-            messages:errorMessages ,             
-            email: req.body.email,         
-            password:req.body.password 
-                      
+    if (errorMessages.length > 0) {
+        res.render("login", {
+            title: "Login",
+            messages: errorMessages,
+            email: req.body.email,
+            password: req.body.password
+
         })
     }
-    
+
     // there is no error
-    else
-    {
-        res.render("login",{
-            title:"Login",
-            message:`Login Success` 
-         })
+    else {
+        res.render("login", {
+            title: "Login",
+            message: `Login Success`
+        })
     }
-    
+
 
 });
 
-app.post("/customer",(req,res)=>{    
-    const errorMessages=[];
+app.post("/customer", (req, res) => {
+   
+    const errorMessages = [];
 
-    if(req.body.yname =="") 
-    {
-        errorMessages.push({nameError:"Enter your name"});
+    if (req.body.yname == "") {
+        errorMessages.push({ nameError: "Enter your name" });
     }
-    else if (!/[^0-9@$!%*#?&]{2,}$/.test(`${req.body.yname}`))
-    {
-        errorMessages.push({nameError:"Enter your name with letter only"});
-    }   
-
-    if(req.body.email =="") 
-    {
-        errorMessages.push({emailError:"Enter your email"});
-    }             
-
-
-    if(req.body.password=="")
-    {
-        errorMessages.push({passError:"Enter your password"});
-    }
-    else if (!/^[a-zA-Z0-9]{6,12}$/.test(`${req.body.password}`))
-    {
-        errorMessages.push({passError:"Enter password between 6 to 12 characters with letter and number only"});
+    else if (!/[^0-9@$!%*#?&]{2,}$/.test(`${req.body.yname}`)) {
+        errorMessages.push({ nameError: "Enter your name with letter only" });
     }
 
-     if(`${req.body.passwordagain}`!=`${req.body.password}`)
-    {
-        errorMessages.push({passagainError:"Password is not matching"});
+    if (req.body.email == "") {
+        errorMessages.push({ emailError: "Enter your email" });
     }
-    
+
+
+    if (req.body.password == "") {
+        errorMessages.push({ passError: "Enter your password" });
+    }
+    else if (!/^[a-zA-Z0-9]{6,12}$/.test(`${req.body.password}`)) {
+        errorMessages.push({ passError: "Enter password between 6 to 12 characters with letter and number only" });
+    }
+
+    if (`${req.body.passwordagain}` != `${req.body.password}`) {
+        errorMessages.push({ passagainError: "Password is not matching" });
+    }
+
 
 
     //THere is an error
-    if(errorMessages.length>0)
-    {
-        res.render("customer",{
-            title:"Customer",
-            messages:errorMessages  ,    
-            yname: req.body.yname,         
-            email: req.body.email,         
-            password:req.body.password  
+    if (errorMessages.length > 0) {
+        res.render("customer", {
+            title: "Customer",
+            messages: errorMessages,
+            yname: req.body.yname,
+            email: req.body.email,
+            password: req.body.password
         })
     }
-    
+
     // there is no error
-    else
-    {
-        res.render("dashboard",{
-            title:"Dashboard",
-            message:`${req.body.email}` 
-         })
+    else {
+        const {email,yname}=req.body;
+        const sgMail = require('@sendgrid/mail');
+        sgMail.setApiKey("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");
+        const msg = {
+            to: `${email}`,
+            from: 'kimphuongtu135@gmail.com',
+            subject: 'Register Customer Form',
+            text:`Your account is created. Thank you!`,
+            html:`
+            Customer name: ${yname},
+            Customer email: ${email}
+            `,
+        };
+        sgMail.send(msg)
+        .then(()=>{
+            console.log(`Email sent`);
+        })
+        .catch(err=>{
+            console.log(`Err ${err}`);
+        });
+        res.render("dashboard", {
+            title: "Dashboard",
+            message: `${req.body.email}`
+        })
     }
-    
+
 
 });
 
 
 
-const PORT=9000;
-app.listen(PORT,()=>{
+const PORT = 9000;
+app.listen(PORT, () => {
     console.log(`SERVER CONNECTION`);
 })
