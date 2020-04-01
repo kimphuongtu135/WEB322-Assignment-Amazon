@@ -2,8 +2,6 @@
 //StudentID: 148886179
 const express = require("express");
 const handlebars = require("express-handlebars");
-const productModel = require("./models/product");
-const categoriesModel = require("./models/categories");
 const bodyParser = require('body-parser');
 require('dotenv').config({path:"./config/keys.env"});
 
@@ -16,155 +14,13 @@ app.use(express.static("public"));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get("/", (req, res) => {
-
-    res.render("home",
-        {
-            title: "Home",
-            categoriesShow: categoriesModel.getAllProduct(),
-            bestsellerShow: productModel.getBestSeller(),
-        })
-});
+//load controllers
+const generalController=require("./controllers/general");
+const productController=require("./controllers/product");
 
 
-app.get("/customer", (req, res) => {
-    res.render("customer",
-        {
-            title: "Customer Registration"
-        })
-
-});
-
-app.get("/login", (req, res) => {
-    res.render("login",
-        {
-            title: "Login"
-        })
-
-});
-
-app.get("/products", (req, res) => {
-    res.render("products",
-        {
-            title: "Products",
-            productShow: productModel.getAllProduct(),
-
-        })
-
-});
-
-app.post("/login", (req, res) => {
-    const errorMessages = [];
-
-    if (req.body.email == "") {
-        errorMessages.push({ emailError: "Enter your email" });
-    }
-
-    if (req.body.password == "") {
-        errorMessages.push({ passError: "Enter your password" });
-    }
-
-
-    //There is an error
-    if (errorMessages.length > 0) {
-        res.render("login", {
-            title: "Login",
-            messages: errorMessages,
-            email: req.body.email,
-            password: req.body.password
-
-        })
-    }
-
-    // there is no error
-    else {
-        res.render("login", {
-            title: "Login",
-            message: `Login Success`
-        })
-    }
-
-
-});
-
-app.post("/customer", (req, res) => {
-   
-    const errorMessages = [];
-
-    if (req.body.yname == "") {
-        errorMessages.push({ nameError: "Enter your name" });
-    }
-    else if (!/[^0-9@$!%*#?&]{2,}$/.test(`${req.body.yname}`)) {
-        errorMessages.push({ nameError: "Enter your name with letter only" });
-    }
-
-    if (req.body.ylname == "") {
-        errorMessages.push({ lnameError: "Enter your name" });
-    }
-    else if (!/[^0-9@$!%*#?&]{2,}$/.test(`${req.body.ylname}`)) {
-        errorMessages.push({ lnameError: "Enter your name with letter only" });
-    }
-
-    if (req.body.email == "") {
-        errorMessages.push({ emailError: "Enter your email" });
-    }
-
-
-    if (req.body.password == "") {
-        errorMessages.push({ passError: "Enter your password" });
-    }
-    else if (!/^[a-zA-Z0-9]{6,12}$/.test(`${req.body.password}`)) {
-        errorMessages.push({ passError: "Enter password between 6 to 12 characters with letter and number only" });
-    }
-
-    if (`${req.body.passwordagain}` != `${req.body.password}`) {
-        errorMessages.push({ passagainError: "Password is not matching" });
-    }
-
-
-
-    //THere is an error
-    if (errorMessages.length > 0) {
-        res.render("customer", {
-            title: "Customer",
-            messages: errorMessages,
-            yname: req.body.yname,
-            ylname: req.body.ylname,
-            email: req.body.email,
-            password: req.body.password
-        })
-    }
-
-    // there is no error
-    else {
-        const {email,yname,ylname}=req.body;
-        const sgMail = require('@sendgrid/mail');
-        sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
-        const msg = {
-            to: `${email}`,
-            from: 'kptustore@gmail.com',
-            subject: 'Register Customer Form',
-            html:`
-            Customer name: ${yname} ${ylname},
-            Customer email: ${email}
-            `,
-        };
-        
-        sgMail.send(msg)
-        .then(()=>{
-            console.log(`Email sent`);
-        })
-        .catch(err=>{
-            console.log(`Err ${err}`);
-        });
-        res.render("dashboard", {
-            title: "Dashboard",
-            message: `${req.body.email}`
-        })
-    }
-
-
-});
+app.use("/",generalController);
+app.use("/products",productController);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
