@@ -1,2 +1,2 @@
-config/keys.env,
-node_modules,
+/config/keys.env
+/node_modules
