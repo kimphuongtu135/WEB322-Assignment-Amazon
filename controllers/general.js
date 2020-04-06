@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const loginModel = require("../models/login");
 
 
 const productModel = require("../models/product");
@@ -63,12 +64,25 @@ router.post("/login", (req, res) => {
             message: `Login Success`
         })
     }
+    const loginUser = {
+        email: req.body.email,
+        password: req.body.password
+    }
 
 
+    const login = new loginModel(loginUser);
+    login.save()
+    //need to change the render
+    .then(() => {
+        console.log(`success`);
+    })
+        .catch(err => {
+            console.log(`Error occured while inserting data into database ${err}`)
+        });
 });
 
 router.post("/customer", (req, res) => {
-   
+
     const errorMessages = [];
 
     if (req.body.yname == "") {
@@ -117,26 +131,26 @@ router.post("/customer", (req, res) => {
 
     // there is no error
     else {
-        const {email,yname,ylname}=req.body;
+        const { email, yname, ylname } = req.body;
         const sgMail = require('@sendgrid/mail');
         sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
         const msg = {
             to: `${email}`,
             from: 'kptustore@gmail.com',
             subject: 'Register Customer Form',
-            html:`
+            html: `
             Customer name: ${yname} ${ylname},
             Customer email: ${email}
             `,
         };
-        
+
         sgMail.send(msg)
-        .then(()=>{
-            console.log(`Email sent`);
-        })
-        .catch(err=>{
-            console.log(`Err ${err}`);
-        });
+            .then(() => {
+                console.log(`Email sent`);
+            })
+            .catch(err => {
+                console.log(`Err ${err}`);
+            });
         res.render("general/dashboard", {
             title: "Dashboard",
             message: `${req.body.email}`
