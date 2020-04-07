@@ -1,8 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const loginModel = require("../models/login");
-
-
+const registerModel = require("../models/register");
 const productModel = require("../models/product");
 const categoriesModel = require("../models/categories");
 
@@ -33,8 +32,25 @@ router.get("/login", (req, res) => {
 
 });
 
+router.get("/profile", (req, res) => {
+    res.render("general/userDashboard",
+        {
+            title: "Profile"
+        })
+
+});
 
 router.post("/login", (req, res) => {
+    const loginUser = {
+        email: req.body.email,
+        password: req.body.password
+    }
+
+
+    const login = new loginModel(loginUser);
+    login.save()
+    //need to change the render
+    .then(() => {
     const errorMessages = [];
 
     if (req.body.email == "") {
@@ -59,21 +75,13 @@ router.post("/login", (req, res) => {
 
     // there is no error
     else {
-        res.render("general/login", {
-            title: "Login",
-            message: `Login Success`
+        res.render("general/userDashboard",
+        {
+            title: "Profile",
+            message: `${req.body.email}`
         })
     }
-    const loginUser = {
-        email: req.body.email,
-        password: req.body.password
-    }
-
-
-    const login = new loginModel(loginUser);
-    login.save()
-    //need to change the render
-    .then(() => {
+   
         console.log(`success`);
     })
         .catch(err => {
@@ -81,7 +89,21 @@ router.post("/login", (req, res) => {
         });
 });
 
+
 router.post("/customer", (req, res) => {
+
+    const registerUser = {
+        firstName:req.body.yname,
+        lastName:req.body.ylname,
+        email: req.body.email,
+        password: req.body.password
+    }
+
+
+    const register = new registerModel(registerUser);
+    register.save()
+    //need to change the render
+    .then(() => {
 
     const errorMessages = [];
 
@@ -156,6 +178,14 @@ router.post("/customer", (req, res) => {
             message: `${req.body.email}`
         })
     }
+
+   
+        console.log(`success register`);
+    })
+        .catch(err => {
+            console.log(`Error occured while inserting data into database ${err}`)
+        });
+
 
 
 });
