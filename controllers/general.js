@@ -136,8 +136,8 @@ router.post("/customer", (req, res) => {
         email: req.body.email,
         password: req.body.password
     }
-    const user = new registerModel(registerUser);
-    user.save()
+    const register = new registerModel(registerUser);
+    register.save()
     .then(() => {
 
    
