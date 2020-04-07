@@ -1,4 +1,5 @@
-
+const path = require("path");
+const bcrypt = require("bcryptjs");
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -32,6 +33,26 @@ const registerSchema = new Schema({
   }
 });
 
+registerSchema.pre("save",function(next)
+{
+
+    
+    bcrypt.genSalt(10)
+    .then((salt)=>{
+        
+        bcrypt.hash(this.password,salt)
+        .then((encryptPassword)=>{
+            this.password = encryptPassword;
+            next();
+
+        })
+        .catch(err=>console.log(`Error happened while hasing ${err}`));
+    })
+    .catch(err=>console.log(`Error happened while salting ${err}`));
+
+
+
+})
 
 const Register = mongoose.model('Register',registerSchema);
 

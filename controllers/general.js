@@ -4,6 +4,9 @@ const loginModel = require("../models/login");
 const registerModel = require("../models/register");
 const productModel = require("../models/product");
 const categoriesModel = require("../models/categories");
+const path = require("path");
+const bcrypt = require("bcryptjs");
+
 
 router.get("/", (req, res) => {
 
@@ -40,70 +43,8 @@ router.get("/profile", (req, res) => {
 
 });
 
-router.post("/login", (req, res) => {
-    const loginUser = {
-        email: req.body.email,
-        password: req.body.password
-    }
-
-
-    const login = new loginModel(loginUser);
-    login.save()
-    //need to change the render
-    .then(() => {
-    const errorMessages = [];
-
-    if (req.body.email == "") {
-        errorMessages.push({ emailError: "Enter your email" });
-    }
-
-    if (req.body.password == "") {
-        errorMessages.push({ passError: "Enter your password" });
-    }
-
-
-    //There is an error
-    if (errorMessages.length > 0) {
-        res.render("general/login", {
-            title: "Login",
-            messages: errorMessages,
-            email: req.body.email,
-            password: req.body.password
-
-        })
-    }
-
-    // there is no error
-    else {
-        res.render("general/userDashboard",
-        {
-            title: "Profile",
-            message: `${req.body.email}`
-        })
-    }
-   
-        console.log(`success`);
-    })
-        .catch(err => {
-            console.log(`Error occured while inserting data into database ${err}`)
-        });
-});
-
 
 router.post("/customer", (req, res) => {
-
-    const registerUser = {
-        firstName:req.body.yname,
-        lastName:req.body.ylname,
-        email: req.body.email,
-        password: req.body.password
-    }
-
-
-    const register = new registerModel(registerUser);
-    register.save()
-    //need to change the render
-    .then(() => {
 
     const errorMessages = [];
 
@@ -121,11 +62,7 @@ router.post("/customer", (req, res) => {
         errorMessages.push({ lnameError: "Enter your name with letter only" });
     }
 
-    if (req.body.email == "") {
-        errorMessages.push({ emailError: "Enter your email" });
-    }
-
-
+    
     if (req.body.password == "") {
         errorMessages.push({ passError: "Enter your password" });
     }
@@ -137,8 +74,22 @@ router.post("/customer", (req, res) => {
         errorMessages.push({ passagainError: "Password is not matching" });
     }
 
-
-
+    if (req.body.email == "") {
+        errorMessages.push({ emailError: "Enter your email" });
+    }
+    else if (req.body.email!="")  { 
+        registerModel.findOne({email:req.body.email})
+       
+    .then((user)=>{
+        
+        //there was matching email
+        if(user)
+        {
+            errorMessages.push({ emailError: "Sorr your email has been already used" })
+        }
+    })
+        .catch(err=>console.log(`Error ${err}`));
+}
     //THere is an error
     if (errorMessages.length > 0) {
         res.render("general/customer", {
@@ -178,6 +129,16 @@ router.post("/customer", (req, res) => {
             message: `${req.body.email}`
         })
     }
+    
+    const registerUser = {
+        firstName:req.body.yname,
+        lastName:req.body.ylname,
+        email: req.body.email,
+        password: req.body.password
+    }
+    const user = new registerModel(registerUser);
+    user.save()
+    .then(() => {
 
    
         console.log(`success register`);
@@ -185,10 +146,60 @@ router.post("/customer", (req, res) => {
         .catch(err => {
             console.log(`Error occured while inserting data into database ${err}`)
         });
-
-
-
 });
+
+router.post("/login", (req, res) => {
+    /*const loginUser = {
+        email: req.body.email,
+        password: req.body.password
+    }
+*/
+
+   
+
+    /*const login = new loginModel(loginUser);
+    login.save()
+    //need to change the render
+    .then(() => {
+    const errorMessages = [];
+
+    if (req.body.email == "") {
+        errorMessages.push({ emailError: "Enter your email" });
+    }
+
+    if (req.body.password == "") {
+        errorMessages.push({ passError: "Enter your password" });
+    }
+
+
+    //There is an error
+    if (errorMessages.length > 0) {
+        res.render("general/login", {
+            title: "Login",
+            messages: errorMessages,
+            email: req.body.email,
+            password: req.body.password
+
+        })
+    }
+
+    // there is no error
+    else {
+        res.render("general/userDashboard",
+        {
+            title: "Profile",
+            message: `${req.body.email}`
+        })
+    }
+   
+        console.log(`success`);
+    })
+        .catch(err => {
+            console.log(`Error occured while inserting data into database ${err}`)
+        });
+        */
+});
+
 
 
 module.exports = router;
