@@ -77,19 +77,21 @@ router.post("/customer", (req, res) => {
     if (req.body.email == "") {
         errorMessages.push({ emailError: "Enter your email" });
     }
-    else if (req.body.email!="")  { 
-        registerModel.findOne({email:req.body.email})
+  /*  else if (req.body.email !="")  { 
+        registerModel.findOne({"email":req.body.email})
        
     .then((user)=>{
         
         //there was matching email
         if(user)
         {
+            console.log(`user`)
             errorMessages.push({ emailError: "Sorr your email has been already used" })
+            
         }
     })
         .catch(err=>console.log(`Error ${err}`));
-}
+}*/
     //THere is an error
     if (errorMessages.length > 0) {
         res.render("general/customer", {
@@ -104,6 +106,43 @@ router.post("/customer", (req, res) => {
 
     // there is no error
     else {
+        
+            registerModel.findOne({"email":req.body.email})
+           
+        .then((user)=>{
+            
+            //there was matching email
+            if(user)
+            {
+                errorMessages.push({ emailError: "Sorry! your email has been already used" })
+                res.render("general/customer", {
+                    title: "Customer",
+                    messages: errorMessages,
+                    yname: req.body.yname,
+                    ylname: req.body.ylname,
+                    email: req.body.email,
+                    password: req.body.password
+                })
+            }
+       
+     else{
+         // No matching email
+        const registerUser = {
+            firstName:req.body.yname,
+            lastName:req.body.ylname,
+            email: req.body.email,
+            password: req.body.password
+        }
+        const register = new registerModel(registerUser);
+        register.save()
+        .then(() => {
+            console.log(`success register`);
+        })
+            .catch(err => {
+                console.log(`Error occured while inserting data into database ${err}`)
+            });
+
+        
         const { email, yname, ylname } = req.body;
         const sgMail = require('@sendgrid/mail');
         sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
@@ -129,23 +168,11 @@ router.post("/customer", (req, res) => {
             message: `${req.body.email}`
         })
     }
-    
-    const registerUser = {
-        firstName:req.body.yname,
-        lastName:req.body.ylname,
-        email: req.body.email,
-        password: req.body.password
+})
+        .catch(err=>console.log(`Error ${err}`));
     }
-    const register = new registerModel(registerUser);
-    register.save()
-    .then(() => {
-
-   
-        console.log(`success register`);
-    })
-        .catch(err => {
-            console.log(`Error occured while inserting data into database ${err}`)
-        });
+    
+    
 });
 
 router.post("/login", (req, res) => {
