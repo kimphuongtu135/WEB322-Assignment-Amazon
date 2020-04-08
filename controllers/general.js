@@ -35,19 +35,13 @@ router.get("/login", (req, res) => {
 
 });
 
-router.get("/profile", (req, res) => {
-    res.render("general/userDashboard",
-        {
-            title: "Profile"
-        })
 
-});
 
 
 router.post("/customer", (req, res) => {
 
     const errorMessages = [];
-
+    //Check if there is any field that is empty
     if (req.body.yname == "") {
         errorMessages.push({ nameError: "Enter your name" });
     }
@@ -62,7 +56,7 @@ router.post("/customer", (req, res) => {
         errorMessages.push({ lnameError: "Enter your name with letter only" });
     }
 
-    
+
     if (req.body.password == "") {
         errorMessages.push({ passError: "Enter your password" });
     }
@@ -77,21 +71,7 @@ router.post("/customer", (req, res) => {
     if (req.body.email == "") {
         errorMessages.push({ emailError: "Enter your email" });
     }
-  /*  else if (req.body.email !="")  { 
-        registerModel.findOne({"email":req.body.email})
-       
-    .then((user)=>{
-        
-        //there was matching email
-        if(user)
-        {
-            console.log(`user`)
-            errorMessages.push({ emailError: "Sorr your email has been already used" })
-            
-        }
-    })
-        .catch(err=>console.log(`Error ${err}`));
-}*/
+
     //THere is an error
     if (errorMessages.length > 0) {
         res.render("general/customer", {
@@ -106,90 +86,78 @@ router.post("/customer", (req, res) => {
 
     // there is no error
     else {
-        
-            registerModel.findOne({"email":req.body.email})
-           
-        .then((user)=>{
-            
-            //there was matching email
-            if(user)
-            {
-                errorMessages.push({ emailError: "Sorry! your email has been already used" })
-                res.render("general/customer", {
-                    title: "Customer",
-                    messages: errorMessages,
-                    yname: req.body.yname,
-                    ylname: req.body.ylname,
-                    email: req.body.email,
-                    password: req.body.password
-                })
-            }
-       
-     else{
-         // No matching email
-        const registerUser = {
-            firstName:req.body.yname,
-            lastName:req.body.ylname,
-            email: req.body.email,
-            password: req.body.password
-        }
-        const register = new registerModel(registerUser);
-        register.save()
-        .then(() => {
-            console.log(`success register`);
-        })
-            .catch(err => {
-                console.log(`Error occured while inserting data into database ${err}`)
-            });
 
-        
-        const { email, yname, ylname } = req.body;
-        const sgMail = require('@sendgrid/mail');
-        sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
-        const msg = {
-            to: `${email}`,
-            from: 'kptustore@gmail.com',
-            subject: 'Register Customer Form',
-            html: `
-            Customer name: ${yname} ${ylname},
-            Customer email: ${email}
+        registerModel.findOne({ email: req.body.email })
+
+            .then((user) => {
+
+                //there was matching email
+                if (user) {
+                    errorMessages.push({ emailError: "Sorry! your email has been already used" });
+                    res.render("general/customer", {
+                        title: "Customer",
+                        messages: errorMessages,
+                        yname: req.body.yname,
+                        ylname: req.body.ylname,
+                        email: req.body.email,
+                        password: req.body.password
+                    })
+                }
+
+                else {
+                    // No matching email
+                    const registerUser = {
+                        firstName: req.body.yname,
+                        lastName: req.body.ylname,
+                        email: req.body.email,
+                        password: req.body.password
+                    }
+                    const register = new registerModel(registerUser);
+                    register.save()
+                        .then(() => {
+                            console.log(`Successfully Register`);
+                        })
+                        .catch(err => {
+                            console.log(`Error occured while inserting data into database ${err}`);
+                        });
+
+                    //Sending email when register successfully
+                    const { email, yname, ylname } = req.body;
+                    const sgMail = require('@sendgrid/mail');
+                    sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
+                    const msg = {
+                        to: `${email}`,
+                        from: 'kptustore@gmail.com',
+                        subject: 'Register Customer Form',
+                        html: `
+                                Customer name: ${yname} ${ylname},
+                                Customer email: ${email}
             `,
-        };
+                    };
 
-        sgMail.send(msg)
-            .then(() => {
-                console.log(`Email sent`);
+                    sgMail.send(msg)
+                        .then(() => {
+                            console.log(`Email sent`);
+                        })
+                        .catch(err => {
+                            console.log(`Error happened while sending email ${err}`);
+                        });
+                    res.render("general/dashboard", {
+                        title: "Dashboard",
+                        message: `${req.body.email}`
+                    })
+                }
             })
-            .catch(err => {
-                console.log(`Err ${err}`);
-            });
-        res.render("general/dashboard", {
-            title: "Dashboard",
-            message: `${req.body.email}`
-        })
+            .catch(err => console.log(`Error ${err}`));
     }
-})
-        .catch(err=>console.log(`Error ${err}`));
-    }
-    
-    
+
+
 });
 
 router.post("/login", (req, res) => {
-    /*const loginUser = {
-        email: req.body.email,
-        password: req.body.password
-    }
-*/
 
-   
-
-    /*const login = new loginModel(loginUser);
-    login.save()
-    //need to change the render
-    .then(() => {
     const errorMessages = [];
-
+    //Checking email and password are empty
     if (req.body.email == "") {
         errorMessages.push({ emailError: "Enter your email" });
     }
@@ -212,21 +180,68 @@ router.post("/login", (req, res) => {
 
     // there is no error
     else {
-        res.render("general/userDashboard",
+
+        registerModel.findOne({ email: req.body.email })
+
+            .then((user) => {
+
+                //there was no matching email
+                //Cannot find user
+                if (user == null) {
+                    errorMessages.push({ emailError: "You enter wrong email" });
+                    res.render("general/login", {
+                        title: "Login",
+                        messages: errorMessages,
+                        email: req.body.email,
+                        password: req.body.password
+                    })
+
+                }
+                //Email matching
+                // User is found
+                else {
+                    bcrypt.compare(req.body.password, user.password)
+                        .then((isMatched) => {
+
+                            //password match
+                            //Login successfully
+                            if (isMatched == true) {
+                                req.session.user = user;
+                                res.redirect("/profile");
+                            }
+                            //password doesn't match
+                            else {
+                                errorMessages.push({ passError: "Your password is incorrect" });
+                                res.render("general/login", {
+                                    title: "Login",
+                                    messages: errorMessages,
+                                    email: req.body.email,
+                                    password: req.body.password
+                                })
+                            }
+                        })
+                        .catch(err => console.log(`Error happened while verifying password ${err}`));
+
+                }
+            })
+            .catch(err => console.log(`Error happened while verifying email ${err}`));
+    }
+
+});
+router.get("/profile", (req, res) => {
+   
+    res.render("general/userDashboard",
         {
             title: "Profile",
-            message: `${req.body.email}`
+
         })
-    }
-   
-        console.log(`success`);
-    })
-        .catch(err => {
-            console.log(`Error occured while inserting data into database ${err}`)
-        });
-        */
+
 });
 
+router.get("/logout",(req,res)=>{
 
+    req.session.destroy();
+    res.redirect("/login")
+});
 
 module.exports = router;
