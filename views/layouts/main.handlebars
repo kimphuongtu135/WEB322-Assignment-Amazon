@@ -16,9 +16,15 @@
         <nav class="navigation">
             <a class="nav-item" href="/">Home</a>
             <a class="nav-item" href="/products">Products</a>
-            <a class="nav-item" href="/customer">Register</a>
-            <a class="nav-item" href="/login">Login</a>
-            <a class="nav-item" href="/logout">Logout</a>
+           
+            {{#if user}}
+                 <a class="nav-item" href="/logout">Logout</a>
+            {{else}}
+                 <a class="nav-item" href="/customer">Register</a>
+                 <a class="nav-item" href="/login">Login</a>
+            {{/if}}
+            
+           
 
 
         </nav>
@@ -38,9 +44,12 @@
 
             <a class="nav-item1" href="/">Home</a>
             <a class="nav-item1" href="/products">Products</a>
-            <a class="nav-item1" href="/customer">Register</a>
-            <a class="nav-item1" href="/login">Login</a>
-            <a class="nav-item1" href="/logout">Logout</a>
+            {{#if user}}
+                 <a class="nav-item1" href="/logout">Logout</a>
+            {{else}}
+                 <a class="nav-item1" href="/customer">Register</a>
+                 <a class="nav-item1" href="/login">Login</a>
+            {{/if}}
         </div>
     </footer>
 

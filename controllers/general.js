@@ -1,11 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const loginModel = require("../models/login");
 const registerModel = require("../models/register");
 const productModel = require("../models/product");
 const categoriesModel = require("../models/categories");
 const path = require("path");
 const bcrypt = require("bcryptjs");
+const isLogin=require("../middleware/auth");
 
 
 router.get("/", (req, res) => {
@@ -228,7 +228,7 @@ router.post("/login", (req, res) => {
     }
 
 });
-router.get("/profile", (req, res) => {
+router.get("/profile",isLogin,(req, res) => {
    
     res.render("general/userDashboard",
         {
