@@ -6,6 +6,7 @@ const categoriesModel = require("../models/categories");
 const path = require("path");
 const bcrypt = require("bcryptjs");
 const isLogin=require("../middleware/auth");
+const authorization=require("../middleware/authorization");
 
 
 router.get("/", (req, res) => {
@@ -148,7 +149,7 @@ router.post("/customer", (req, res) => {
                     })
                 }
             })
-            .catch(err => console.log(`Error ${err}`));
+            .catch(err => console.log(`Error happned while finding matching email ${err}`));
     }
 
 
@@ -201,12 +202,13 @@ router.post("/login", (req, res) => {
                 // User is found
                 else {
                     bcrypt.compare(req.body.password, user.password)
-                        .then((isMatched) => {
+                        .then((isCorrect) => {
 
                             //password match
                             //Login successfully
-                            if (isMatched == true) {
+                            if (isCorrect) {
                                 req.session.user = user;
+                                //authorization(req,res);
                                 res.redirect("/profile");
                             }
                             //password doesn't match
@@ -228,15 +230,17 @@ router.post("/login", (req, res) => {
     }
 
 });
-router.get("/profile",isLogin,(req, res) => {
+router.get("/profile",isLogin,authorization); 
+
+/*router.get("/admin-profile",isLogin,(req, res) => {
    
-    res.render("general/userDashboard",
+    res.render("general/adminDashboard",
         {
-            title: "Profile",
+            title: "Admin",
 
         })
 
-});
+});*/
 
 router.get("/logout",(req,res)=>{
 
