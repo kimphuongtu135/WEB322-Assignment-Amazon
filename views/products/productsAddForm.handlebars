@@ -1,6 +1,6 @@
 
 <div class="customer">
-     <form method="POST" action="/products/add">
+     <form method="POST" action="/products/add" enctype="multipart/form-data">
 
         <legend class="legend">Add Product</legend> <br>
 
@@ -8,7 +8,7 @@
         <input type="text" name="pname" id="pname" value='{{pname}}'> 
          <br>
 
-        <label for="pprice">Product Price</label>
+        <label for="pprice">Price</label>
         <input type="text" name="pprice" id="pprice" value='{{pprice}}'> 
          <br>
 
@@ -31,7 +31,7 @@
         <br><br>
 
         <label>File Upload</label>
-        <input type="file" name="ppic" id="ppic"> 
+        <input type="file" name="productPic" id="productPic"> 
         <br><br>
 
         <input class="button" type="submit" value="Add Product">
