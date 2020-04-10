@@ -1,0 +1,42 @@
+
+<div class="customer">
+     <form method="POST" action="/products/add">
+
+        <legend class="legend">Add Product</legend> <br>
+
+        <label for="pname">Product name</label>
+        <input type="text" name="pname" id="pname" value='{{pname}}'> 
+         <br>
+
+        <label for="pprice">Product Price</label>
+        <input type="text" name="pprice" id="pprice" value='{{pprice}}'> 
+         <br>
+
+        <label for="pdetail">Product Details</label>
+        <textarea id="pdetail" name="pdetail" value='{{pdetail}}'></textarea><br>
+
+         <label for="pcate">Product Category</label>
+        <input type="text" name="pcate" id="pcate" value='{{pcate}}'> 
+         <br>
+
+         <label for="pquan">Product Quantity</label>
+        <input type="text" name="pquan" id="pquan" value='{{pquan}}'> 
+         <br>
+        
+        <label>Best Seller</label>
+        <select name="pbest">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select>
+        <br><br>
+
+        <label>File Upload</label>
+        <input type="file" name="ppic" id="ppic"> 
+        <br><br>
+
+        <input class="button" type="submit" value="Add Product">
+    </form>
+</div>
+
+
+  
