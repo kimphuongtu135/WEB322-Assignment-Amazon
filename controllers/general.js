@@ -3,7 +3,6 @@ const router = express.Router()
 const registerModel = require("../models/register");
 const productModel = require("../models/product");
 const categoriesModel = require("../models/categories");
-const path = require("path");
 const bcrypt = require("bcryptjs");
 const isLogin=require("../middleware/auth");
 const authorization=require("../middleware/authorization");

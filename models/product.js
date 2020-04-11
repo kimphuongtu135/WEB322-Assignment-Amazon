@@ -5,7 +5,7 @@ const product ={
     {
         
          this.fakeDB.push({
-            src: "/images/piano2.jpg",
+            src: "piano2.jpg",
             type: "Keyboard",
             description: "Yamaha - Model YDP144R - Wooden Color, 88 Keys",
             name: "U1 Grand Piano",
@@ -14,7 +14,7 @@ const product ={
         });
         
         this.fakeDB.push({
-            src: "/images/succulent1.jpg",
+            src: "succulent1.jpg",
             type: "Plant",
             description: "Indoor Succulent",
             name: "Indoor Succulent",
@@ -23,7 +23,7 @@ const product ={
         });
 
          this.fakeDB.push({
-            src: "/images/piano6.jpg",
+            src: "piano6.jpg",
             type: "Keyboard",
             description: "Yamaha - Model RockJam - Digital Piano, 88 keys",
             name: "88 Keys Synth Workstation",
@@ -31,7 +31,7 @@ const product ={
             bestseller:false
         });
         this.fakeDB.push({
-            src: "/images/chocolatebox.jpg",
+            src: "chocolatebox.jpg",
             type: "Chocolate",
             description: "Chocolate Gift Box- 250g",
             name: "Assorted Chocolate Collection",
@@ -40,7 +40,7 @@ const product ={
         });
      
          this.fakeDB.push({
-            src: "/images/piano5.jpg",
+            src: "piano5.jpg",
             type: "Keyboard",
             description: "Yamaha - Digital Piano - Black Color",
             name: "Arius YDP-164 Digital Piano",
@@ -48,7 +48,7 @@ const product ={
             bestseller:true
         });
         this.fakeDB.push({
-            src: "/images/succulent2.jpg",
+            src: "succulent2.jpg",
             type: "Plant",
             description: "Indoor Succulent with Pot",
             name: "Succulent with Pot",
@@ -57,7 +57,7 @@ const product ={
         });
 
         this.fakeDB.push({
-            src: "/images/piano1.jpg",
+            src: "piano1.jpg",
             type: "Keyboard",
             description: "Yamaha - Model L515Wh",
             name: "88-Key Digital Piano- Black ",
@@ -66,7 +66,7 @@ const product ={
         });
 
         this.fakeDB.push({
-            src: "/images/succulent3.jpg",
+            src: "succulent3.jpg",
             type: "Plant",
             description: "Indoor Succulent with Pot",
             name: "Succulent",
@@ -74,7 +74,7 @@ const product ={
             bestseller:true
         });
         this.fakeDB.push({
-            src: "/images/piano3.jpg",
+            src: "piano3.jpg",
             type: "Keyboard",
             description: "Yamaha - Digital Organ",
             name: "Vintage Electone Organ ",
@@ -83,7 +83,7 @@ const product ={
         });
 
         this.fakeDB.push({
-            src: "/images/piano4.jpg",
+            src: "piano4.jpg",
             type: "Keyboard",
             description: "Yamaha - USB Midi Keyboard - 49Mk3",
             name: "M-Audio ",
@@ -92,7 +92,7 @@ const product ={
         });
 
         this.fakeDB.push({
-            src: "/images/guitar2.jpg",
+            src: "guitar2.jpg",
             type: "Guitar",
             description: "Yamaha - Beginners Guitar",
             name: "F325D Acoustic Guitar ",
@@ -101,7 +101,7 @@ const product ={
         });
 
         this.fakeDB.push({
-            src: "/images/cookie.jpg",
+            src: "cookie.jpg",
             type: "Chocolate",
             description: "Chocolate Cookies Gift Box- 150g",
             name: "Cookies Chocolate Collection",
@@ -110,7 +110,7 @@ const product ={
         });
 
         this.fakeDB.push({
-            src: "/images/guitar3.jpg",
+            src: "guitar3.jpg",
             type: "Guitar",
             description: "Yamaha - Wooden Color- Beginners Guitar",
             name: "FG800M Acoustic Guitar ",
@@ -119,7 +119,7 @@ const product ={
         });
 
         this.fakeDB.push({
-            src: "/images/against.jpg",
+            src: "against.jpg",
             type: "Boardgame",
             description: "This cards game for group of horrible people",
             name: "Cards Against Hummanity Card Game ",
@@ -128,7 +128,7 @@ const product ={
         });
         
         this.fakeDB.push({
-            src: "/images/guitar-elec1.jpg",
+            src: "guitar-elec1.jpg",
             type: "Guitar",
             description: "Yamaha - Full size, Solid Elctric Guitar Kit",
             name: "500 Seies Bass Guitar ",
@@ -137,7 +137,7 @@ const product ={
         });
 
         this.fakeDB.push({
-            src: "/images/guitar4.jpg",
+            src: "guitar4.jpg",
             type: "Guitar",
             description: "Yamaha - Wooden Color - Steel Strings",
             name: "AG800M Acoustic Guitar ",
@@ -146,7 +146,7 @@ const product ={
         });
 
         this.fakeDB.push({
-            src: "/images/uno.jpg",
+            src: "uno.jpg",
             type: "Boardgame",
             description: "Card game of matching color and number for group of 2 up 10 people",
             name: "Uno Card Game ",
@@ -155,7 +155,7 @@ const product ={
         });
 
         this.fakeDB.push({
-            src: "/images/poker.jpg",
+            src: "poker.jpg",
             type: "Boardgame",
             description: "Poker with 52 cards",
             name: "Plastic Poker Cards ",
