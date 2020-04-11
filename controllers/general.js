@@ -6,16 +6,36 @@ const categoriesModel = require("../models/categories");
 const bcrypt = require("bcryptjs");
 const isLogin=require("../middleware/auth");
 const authorization=require("../middleware/authorization");
+const productDBModel = require("../models/productData");
 
 
 router.get("/", (req, res) => {
 
+    productDBModel.find()
+    .then((products) => 
+    {
+
+        const mapProduct = products.map(product => {
+            return {
+                id: product._id,
+                productName: product.productName,
+                productPrice: product.productPrice,
+                productDetail: product.productDetail,
+                productCategory: product.productCategory,
+                productQuantity: product.productQuantity,
+                bestSeller: product.bestSeller,
+                productPic: product.productPic
+            }
+        });
     res.render("general/home",
         {
             title: "Home",
             categoriesShow: categoriesModel.getAllProduct(),
-            bestsellerShow: productModel.getBestSeller(),
+            //bestsellerShow: productModel.getBestSeller(),
+            bestsellerShow: mapProduct,
         })
+    })
+    .catch(err => console.log(`Error happened when pulling data from the database :${err}`));
 });
 
 
@@ -72,7 +92,7 @@ router.post("/customer", (req, res) => {
         errorMessages.push({ emailError: "Enter your email" });
     }
 
-    //THere is an error
+    //There is an error
     if (errorMessages.length > 0) {
         res.render("general/customer", {
             title: "Customer",

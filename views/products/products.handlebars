@@ -4,7 +4,7 @@
     {{#each productShow}}
     <div class="container-product">
 
-        {{#if this.bestseller}}
+        {{#if this.bestSeller}}
         <img class ="bs" src="/images/best.png" alt="bestseller" width="40" height="40">
         {{/if}}
 
@@ -19,6 +19,10 @@
 
             <p>
                 <span class="bold"> Category: </span>{{this.productCategory}}
+            </p>
+
+             <p>
+                <span class="bold">Detail:</span> {{this.productDetail}}
             </p>
 
             <p>

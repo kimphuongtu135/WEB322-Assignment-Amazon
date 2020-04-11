@@ -11,33 +11,33 @@ const productDataModel = require("../models/productData");
 router.get("/", (req, res) => {
     //Pulling data from productDataModel to here
     productDBModel.find()
-    .then((products)=>{
+        .then((products) => {
 
-        const mapProduct=products.map(product=>{
-            return{
-                id:product._id,
-                productName: product.productName,
-                 productPrice: product.productPrice,
-                 productDetail: product.productDetail,
-                 productCategory: product.productCategory,
-                 productQuantity:product.productQuantity,
-                 bestSeller: product.bestSeller,
-                 productPic: product.productPic
-            }
-        });
+            const mapProduct = products.map(product => {
+                return {
+                    id: product._id,
+                    productName: product.productName,
+                    productPrice: product.productPrice,
+                    productDetail: product.productDetail,
+                    productCategory: product.productCategory,
+                    productQuantity: product.productQuantity,
+                    bestSeller: product.bestSeller,
+                    productPic: product.productPic
+                }
+            });
 
 
 
-        res.render("products/products",
-        {
-            title: "Products",
-            //productShow: productModel.getAllProduct(),
-            productShow:mapProduct ,
+            res.render("products/products",
+                {
+                    title: "Products",
+                    //productShow: productModel.getAllProduct(),
+                    productShow: mapProduct,
+
+                })
 
         })
-
-    })
-    .catch(err => console.log(`Error happened when pulling data from the database :${err}`));
+        .catch(err => console.log(`Error happened when pulling data from the database :${err}`));
 
 });
 
@@ -51,7 +51,7 @@ router.get("/add", isLogin, (req, res) => {
         })
 });
 
-
+//Temporary router for convert manual database to MongoDB database
 router.get("/convert", (req, res) => {
     transferProduct.init();
     for (let i = 0; i < transferProduct.fakeDB.length; i++) {
@@ -74,8 +74,8 @@ router.get("/convert", (req, res) => {
                         productPic: transferProduct.fakeDB[i].src
                     }
                 })
-                .then(() => res.send('.'))
-                .catch(err => console.log(`Error happened when inserting in the database :${err}`));
+                    .then(() => res.send('.'))
+                    .catch(err => console.log(`Error happened when inserting in the database :${err}`));
 
             })
             .catch(err => console.log(`Error happened when inserting in the database :${err}`));
