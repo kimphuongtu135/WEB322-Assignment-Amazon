@@ -5,7 +5,7 @@ const isLogin = require("../middleware/auth");
 const productDBModel = require("../models/productData");
 const path = require("path");
 const transferProduct = require("../models/product");
-const productDataModel = require("../models/productData");
+
 
 
 router.get("/", (req, res) => {
@@ -50,6 +50,8 @@ router.get("/add", isLogin, (req, res) => {
 
         })
 });
+
+
 
 //Temporary router for convert manual database to MongoDB database
 router.get("/convert", (req, res) => {
@@ -116,6 +118,94 @@ router.post("/add", (req, res) => {
         })
         .catch(err => console.log(`Error happened when inserting in the database :${err}`));
 });
+
+//Only admin can view all product
+router.get("/viewProduct", isLogin, (req, res) => {
+
+    productDBModel.find()
+        .then((products) => {
+
+            const mapProduct = products.map(product => {
+                return {
+                    id: product._id,
+                    productName: product.productName,
+                    productPrice: product.productPrice,
+                    productDetail: product.productDetail,
+                    productCategory: product.productCategory,
+                    productQuantity: product.productQuantity,
+                    bestSeller: product.bestSeller,
+                    productPic: product.productPic
+                }
+            });
+
+
+            res.render("products/viewAllProduct",
+                {
+                    title: "View Products",
+
+                    productShow: mapProduct,
+                })
+
+        })
+        .catch(err => console.log(`Error happened when pulling data from the database :${err}`));
+
+});
+
+
+
+router.get("/editProduct/:id",isLogin, (req, res) => {
+
+    productDBModel.findById(req.params.id)
+        .then((product) => {
+            const { _id, productName, productPrice, productDetail, productCategory, productQuantity } = product;
+            res.render("products/productsEditForm", {
+                    title: "Edit Products",
+                    _id,
+                    productName,
+                    productPrice,
+                    productDetail,
+                    productCategory,
+                    productQuantity
+            })
+
+        })
+        .catch(err => console.log(`Error happened when editing from the database :${err}`));
+})
+
+router.put("/updateProduct/:id",(req,res)=>{
+
+    const product = {
+        productName: req.body.pname,
+        productPrice: req.body.pprice,
+        productDetail: req.body.pdetail,
+        productCategory: req.body.pcate,
+        productQuantity: req.body.pquan
+       
+    }
+
+    productDBModel.updateOne({_id:req.params.id},product)
+    .then(()=>{
+        res.redirect("/products/viewProduct");
+    })
+    .catch(err=>console.log(`Error happened while updating data from the database :${err}`));
+
+
+});
+
+
+router.delete("/deleteProduct/:id",(req,res)=>{
+    
+    productDBModel.deleteOne({_id:req.params.id})
+    .then(()=>{
+        res.redirect("/products/viewProduct");
+    })
+    .catch(err=>console.log(`Error happened when updating data from the database :${err}`));
+
+});
+
+
+
+
 
 
 module.exports = router;

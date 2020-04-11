@@ -1,0 +1,44 @@
+<div class="bigDiv">
+
+
+    {{#each productShow}}
+    <div class="container-product">
+
+        {{#if this.bestSeller}}
+        <img class ="bs" src="/images/best.png" alt="bestseller" width="40" height="40">
+        {{/if}}
+
+        <img src="/images/{{this.productPic}}" alt="{{this.productName}}" width="200" height="200">
+
+
+
+        <div class="productInfor">
+            <p>
+                <span class="bold"> Name:</span> {{this.productName}}
+            </p>
+
+            <p>
+                <span class="bold"> Category: </span>{{this.productCategory}}
+            </p>
+
+             <p>
+                <span class="bold">Detail:</span> {{this.productDetail}}
+            </p>
+
+            <p>
+                <span class="bold">Quantity:</span> {{this.productQuantity}}
+            </p>
+
+            <p>
+                <span class="bold">Price:</span> {{this.productPrice}}
+            </p>
+
+            <a href="/products/editProduct/{{this.id}}" class="edbutton">Edit</a>
+             <a href="/products/deleteProduct/{{this.id}}?method=DELETE" class="edbutton">Delete</a>
+        </div>
+
+    </div>
+
+    {{/each}}
+
+</div>

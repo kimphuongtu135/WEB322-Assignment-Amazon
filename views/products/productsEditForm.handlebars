@@ -1,0 +1,31 @@
+
+<div class="customer">
+     <form method="POST" action="/products/updateProduct/{{_id}}?method=PUT" enctype="multipart/form-data">
+
+        <legend class="legend">Edit Product</legend> <br>
+
+        <label for="pname">Product name</label>
+        <input type="text" name="pname" id="pname" value='{{productName}}'> 
+         <br>
+
+        <label for="pprice">Price</label>
+        <input type="text" name="pprice" id="pprice" value='{{productPrice}}'> 
+         <br>
+
+        <label for="pdetail">Product Details</label>
+        <textarea id="pdetail" name="pdetail" value='{{productDetail}}'>{{productDetail}}</textarea><br>
+
+         <label for="pcate">Product Category</label>
+        <input type="text" name="pcate" id="pcate" value='{{productCategory}}'> 
+         <br>
+
+         <label for="pquan">Product Quantity</label>
+        <input type="text" name="pquan" id="pquan" value='{{productQuantity}}'> 
+         <br>
+        
+        <input class="button" type="submit" value="Update Product">
+    </form>
+</div>
+
+
+  

@@ -11,18 +11,13 @@ const productDBModel = require("../models/productData");
 
 router.get("/", (req, res) => {
 
-    productDBModel.find()
+    productDBModel.find({bestSeller:true})
     .then((products) => 
     {
-
         const mapProduct = products.map(product => {
             return {
                 id: product._id,
                 productName: product.productName,
-                productPrice: product.productPrice,
-                productDetail: product.productDetail,
-                productCategory: product.productCategory,
-                productQuantity: product.productQuantity,
                 bestSeller: product.bestSeller,
                 productPic: product.productPic
             }
@@ -31,7 +26,6 @@ router.get("/", (req, res) => {
         {
             title: "Home",
             categoriesShow: categoriesModel.getAllProduct(),
-            //bestsellerShow: productModel.getBestSeller(),
             bestsellerShow: mapProduct,
         })
     })

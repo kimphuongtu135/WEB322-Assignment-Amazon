@@ -35,6 +35,21 @@ app.use((req,res,next)=>{
     next();
 });
 
+app.use((req,res,next)=>{
+
+    if(req.query.method=="PUT")
+    {
+        req.method="PUT"
+    }
+
+    else if(req.query.method=="DELETE")
+    {
+        req.method="DELETE"
+    }
+
+    next();
+})
+
 app.use(fileUpload());
 
 

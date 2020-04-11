@@ -317,3 +317,8 @@ body{
 main{
     min-height: 100vh;
 }
+
+.edbutton{
+    padding :3%;
+    text-decoration: none;
+}
