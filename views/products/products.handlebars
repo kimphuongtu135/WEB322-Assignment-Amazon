@@ -1,11 +1,28 @@
+
 <div class="bigDiv">
+    
+<div class="dropdown">
+         <form action="/products/search">
+                 
+                <input type="text" placeholder="Search.." name="search">
+                <button type="submit"><i class="fa fa-search"></i></button>
+               
+            </form>
 
-
+        <button class="dropbtn">Catagories</button>
+        <div class="dropdown-content">
+            {{#each categoriesShow}}
+            <a href="/products/{{this.categoryName}}">{{this.categoryName}}</a>
+            {{/each}}   
+        </div>
+          
+    </div>
+    
     {{#each productShow}}
     <div class="container-product">
 
         {{#if this.bestSeller}}
-        <img class ="bs" src="/images/best.png" alt="bestseller" width="40" height="40">
+        <img class="bs" src="/images/best.png" alt="bestseller" width="40" height="40">
         {{/if}}
 
         <img src="/images/{{this.productPic}}" alt="{{this.productName}}" width="200" height="200">
@@ -21,7 +38,7 @@
                 <span class="bold"> Category: </span>{{this.productCategory}}
             </p>
 
-             <p>
+            <p>
                 <span class="bold">Detail:</span> {{this.productDetail}}
             </p>
 

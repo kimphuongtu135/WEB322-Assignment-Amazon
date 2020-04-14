@@ -7,10 +7,22 @@ const bcrypt = require("bcryptjs");
 const isLogin=require("../middleware/auth");
 const authorization=require("../middleware/authorization");
 const productDBModel = require("../models/productData");
+const categoryDBModel = require("../models/categoryData");
 
 
 router.get("/", (req, res) => {
-
+    categoryDBModel.find()
+    .then((categories) => 
+    {
+        const mapCategories = categories.map(cate => {
+            return {
+                id: cate._id,
+                categoryName: cate.categoryName,
+                categoryPic: cate.categoryPic
+            }
+        });
+  
+   
     productDBModel.find({bestSeller:true})
     .then((products) => 
     {
@@ -25,10 +37,13 @@ router.get("/", (req, res) => {
     res.render("general/home",
         {
             title: "Home",
-            categoriesShow: categoriesModel.getAllProduct(),
+            categoriesShow:mapCategories,
             bestsellerShow: mapProduct,
         })
+   
     })
+    .catch(err => console.log(`Error happened when pulling data from the database :${err}`));
+})
     .catch(err => console.log(`Error happened when pulling data from the database :${err}`));
 });
 
@@ -48,8 +63,6 @@ router.get("/login", (req, res) => {
         })
 
 });
-
-
 
 
 router.post("/customer", (req, res) => {
@@ -243,17 +256,13 @@ router.post("/login", (req, res) => {
     }
 
 });
+
+
 router.get("/profile",isLogin,authorization); 
 
-/*router.get("/admin-profile",isLogin,(req, res) => {
-   
-    res.render("general/adminDashboard",
-        {
-            title: "Admin",
 
-        })
 
-});*/
+
 
 router.get("/logout",(req,res)=>{
 

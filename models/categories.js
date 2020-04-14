@@ -7,27 +7,27 @@ const categories ={
     {
         
          this.fakeDB.push({
-            src: "/images/pianocata.jpg",
+            src: "pianocata.jpg",
             name: "Pianos",
         });
      
          this.fakeDB.push({
-            src: "/images/pianoguitar.jpg",
+            src: "pianoguitar.jpg",
             name: "Guitars",
         });
      
          this.fakeDB.push({
-            src: "/images/chocolate.jpg",
+            src: "chocolate.jpg",
             name: "Chocolate",
         });
 
         this.fakeDB.push({
-            src: "/images/plants.jpg",
+            src: "plants.jpg",
             name: "Plants",
         });
 
         this.fakeDB.push({
-            src: "/images/boardgame.jpg",
+            src: "boardgame.jpg",
             name: "BoardGame",
         }); 
      
