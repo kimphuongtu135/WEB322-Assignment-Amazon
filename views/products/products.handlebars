@@ -2,7 +2,7 @@
 <div class="bigDiv">
     
 <div class="dropdown">
-         <form action="/products/search">
+         <form action="/products/search" method="POST">
                  
                 <input type="text" placeholder="Search.." name="search">
                 <button type="submit"><i class="fa fa-search"></i></button>
@@ -25,8 +25,10 @@
         <img class="bs" src="/images/best.png" alt="bestseller" width="40" height="40">
         {{/if}}
 
-        <img src="/images/{{this.productPic}}" alt="{{this.productName}}" width="200" height="200">
 
+        <a href="/products/productDecs/{{this.id}}">
+        <img src="/images/{{this.productPic}}" alt="{{this.productName}}" width="200" height="200">
+        </a>
 
 
         <div class="productInfor">
@@ -48,6 +50,7 @@
         </div>
 
     </div>
+    
 
     {{/each}}
 

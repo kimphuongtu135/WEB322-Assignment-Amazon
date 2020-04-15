@@ -1,0 +1,45 @@
+<div class="container-product">
+
+    {{#if this.bestSeller}}
+    <img class="bs" src="/images/best.png" alt="bestseller" width="40" height="40">
+    {{/if}}
+
+    <img src="/images/{{this.productPic}}" alt="{{this.productName}}" width="200" height="200">
+
+
+
+    <div class="productInfor">
+        <p>
+            <span class="bold"> Name:</span> {{this.productName}}
+        </p>
+
+        <p>
+            <span class="bold"> Category: </span>{{this.productCategory}}
+        </p>
+
+        <p>
+            <span class="bold">Detail:</span> {{this.productDetail}}
+        </p>
+
+        <p>
+            <span class="bold">Price:</span> {{this.productPrice}}
+        </p>
+
+
+        <form method="POST" action="/products/productDecs/{{_id}}">
+
+            <label for="pquan">Product Quantity:</label>
+            <input type="text" name="pquan" id="pquan" value='1'>
+            <br><br>
+{{#if user}}
+            <button type="submit"><i class="fa fa-shopping-cart" style="font-size:24px"></i>Add to Cart</button>
+{{/if}}
+        </form>
+
+
+        {{#if message}}
+        {{message}}
+        {{/if}}
+    </div>
+
+</div>

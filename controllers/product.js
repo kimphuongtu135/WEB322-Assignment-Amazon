@@ -10,59 +10,58 @@ const categoriesModel = require("../models/categories");
 
 
 
+
 router.get("/", (req, res) => {
     //Pulling data from productDataModel to here
     categoryDBModel.find()
-    .then((categories) => 
-    {
-        const mapCategories = categories.map(cate => {
-            return {
-                id: cate._id,
-                categoryName: cate.categoryName,
-                categoryPic: cate.categoryPic
-            }
-        });
-   
-    productDBModel.find()
-        .then((products) => {
-
-            const mapProduct = products.map(product => {
+        .then((categories) => {
+            const mapCategories = categories.map(cate => {
                 return {
-                    id: product._id,
-                    productName: product.productName,
-                    productPrice: product.productPrice,
-                    productDetail: product.productDetail,
-                    productCategory: product.productCategory,
-                    productQuantity: product.productQuantity,
-                    bestSeller: product.bestSeller,
-                    productPic: product.productPic
+                    id: cate._id,
+                    categoryName: cate.categoryName,
+                    categoryPic: cate.categoryPic
                 }
             });
 
+            productDBModel.find()
+                .then((products) => {
+
+                    const mapProduct = products.map(product => {
+                        return {
+                            id: product._id,
+                            productName: product.productName,
+                            productPrice: product.productPrice,
+                            productDetail: product.productDetail,
+                            productCategory: product.productCategory,
+                            productQuantity: product.productQuantity,
+                            bestSeller: product.bestSeller,
+                            productPic: product.productPic
+                        }
+                    });
 
 
-            res.render("products/products",
-                {
-                    title: "Products",
-                    //productShow: productModel.getAllProduct(),
-                    productShow: mapProduct,
-                    categoriesShow: mapCategories,
+
+                    res.render("products/products",
+                        {
+                            title: "Products",
+                            //productShow: productModel.getAllProduct(),
+                            productShow: mapProduct,
+                            categoriesShow: mapCategories,
+
+                        })
 
                 })
-
+                .catch(err => console.log(`Error happened when pulling data from the database :${err}`));
         })
         .catch(err => console.log(`Error happened when pulling data from the database :${err}`));
-    })
-    .catch(err => console.log(`Error happened when pulling data from the database :${err}`));
 
 });
-
-router.get("/add", isLogin, (req, res) => {
+// Admin add product
+router.get("/profile/add", isLogin, (req, res) => {
 
     res.render("products/productsAddForm",
         {
             title: "Add Products",
-
 
         })
 });
@@ -99,7 +98,7 @@ router.get("/convert", (req, res) => {
     }
 
 });
-
+//temporary router for converting categories data to Database
 router.get("/convertcate", (req, res) => {
     categoriesModel.init();
     for (let i = 0; i < categoriesModel.fakeDB.length; i++) {
@@ -128,7 +127,7 @@ router.get("/convertcate", (req, res) => {
 
 
 
-router.post("/add", (req, res) => {
+router.post("/profile/add", (req, res) => {
 
     const newProduct = {
         productName: req.body.pname,
@@ -138,7 +137,6 @@ router.post("/add", (req, res) => {
         productQuantity: req.body.pquan,
         bestSeller: req.body.pbest === 'true' ? true : false,
         productPic: req.files.productPic.name
-
     }
 
     const product = new productDBModel(newProduct);
@@ -154,7 +152,6 @@ router.post("/add", (req, res) => {
                         .then(() => {
                             res.redirect("/profile")
                         })
-
                 })
 
         })
@@ -162,8 +159,8 @@ router.post("/add", (req, res) => {
 });
 
 //Only admin can view all product
-router.get("/viewProduct", isLogin, (req, res) => {
-
+router.get("/profile/viewProduct", isLogin, (req, res) => {
+    //console.log(`Hello`);
     productDBModel.find()
         .then((products) => {
 
@@ -180,14 +177,12 @@ router.get("/viewProduct", isLogin, (req, res) => {
                 }
             });
 
-
             res.render("products/viewAllProduct",
                 {
                     title: "View Products",
 
                     productShow: mapProduct,
                 })
-
         })
         .catch(err => console.log(`Error happened when pulling data from the database :${err}`));
 
@@ -211,10 +206,10 @@ router.get("/editProduct/:id", isLogin, (req, res) => {
             })
 
         })
-        .catch(err => console.log(`Error happened when editing from the database :${err}`));
+        .catch(err => console.log(`Error  editing from the database :${err}`));
 })
 
-router.put("/updateProduct/:id", (req, res) => {
+router.put("/updateProduct/:id",isLogin, (req, res) => {
 
     const product = {
         productName: req.body.pname,
@@ -223,12 +218,11 @@ router.put("/updateProduct/:id", (req, res) => {
         productCategory: req.body.pcate,
         productQuantity: req.body.pquan
     }
-
     productDBModel.updateOne({ _id: req.params.id }, product)
         .then(() => {
-            res.redirect("/products/viewProduct");
+            res.redirect("/products/profile/viewProduct");
         })
-        .catch(err => console.log(`Error happened while updating data from the database :${err}`));
+        .catch(err => console.log(`Error with updating data from the database :${err}`));
 });
 
 
@@ -236,45 +230,42 @@ router.delete("/deleteProduct/:id", (req, res) => {
 
     productDBModel.deleteOne({ _id: req.params.id })
         .then(() => {
-            res.redirect("/products/viewProduct");
+            res.redirect("/products/profile/viewProduct");
         })
-        .catch(err => console.log(`Error happened when deleting data from the database :${err}`));
+        .catch(err => console.log(`Error with deleting data from the database :${err}`));
 });
-
+//seaarch by keyword
 router.post("/search", (req, res) => {
-    
+    productName=`${req.body.productName}`;
     const viewProduct = [];
-
-   // productName = new RegExp(`${req.body.productName}`,'i');
-    productNa={productName:{$regex:`.*${req.body.productName}.*`,$option:'i'}}
-    console.log(productName)
-        productDBModel.find(productNa)
+    console.log(`Hello`);
+    // `${req.body.productName}` = new RegExp(`${req.body.productName}`,'i');
+   filter = { productName: { $regex: `.*${req.body.productName}.*`, $option: 'i' } };
+    productDBModel.find(filter)
         .then((foundProduct) => {
-        if (foundProduct === null)
-         {
-            res.render("products/products", {
-                title: "Products",
-                showProduct: []
-            });
-        } 
-        else
-         {
-            foundProduct.forEach(product => {
-                viewProduct.push(product);
-            });
-            res.render("products/products", {
-                title: "Products",
-                showProduct: viewProduct
-            });
-        }
-    })
-.catch(err => console.log(`Error happened while verifying password ${err}`));
+            if (foundProduct == null) {
+                res.render("products/products", {
+                    title: "Products", 
+                    showProduct: viewProduct
+                });
+            }
+            else {
+                foundProduct.forEach(product => {
+                    viewProduct.push(product);
+                });
+                res.render("products/products", {
+                    title: "Products",
+                    showProduct: viewProduct
+                });
+            }
+        })
+        .catch(err => console.log(`Error happened when searching product: ${err}`));
 });
 
 // Searching product by categories
 router.get("/:productCategory", (req, res) => {
 
-    productDBModel.find({productCategory:req.params.productCategory})
+    productDBModel.find({ productCategory: req.params.productCategory })
         .then((products) => {
 
             const mapProduct = products.map(product => {
@@ -290,7 +281,6 @@ router.get("/:productCategory", (req, res) => {
                 }
             });
 
-
             res.render("products/products",
                 {
                     title: "Products",
@@ -299,7 +289,56 @@ router.get("/:productCategory", (req, res) => {
 
         })
         .catch(err => console.log(`Error happened when pulling data from the database :${err}`));
-        });
+});
+//Product Description Page
+router.get("/productDecs/:id", (req, res) => {
+    const message=[];
+    productDBModel.findById(req.params.id)
+        .then((product) => {
+            
+            const { _id, productName, productPrice, productDetail, productCategory, productQuantity,productPic } = product;
+            message.push("Login is required for adding product")
+            res.render("products/productDecs", {
+                title: "Products Details",
+                _id,
+                productName,
+                productPrice,
+                productDetail,
+                productCategory,
+                productQuantity,
+                productPic,
+                message
+            })
+        
+        })
+        .catch(err => console.log(`Error happened while loading product to cart  :${err}`));
+})
 
+router.post("/productDecs/:id", (req, res) => {
+    const message=[];
+    productDBModel.findById(req.params.id)
+    .then((product) => {
+        message.push("Adding product successfully")
+        const { _id, productName, productPrice, productDetail, productCategory, productQuantity,productPic } = product;
+        res.render("products/productDecs", {
+            title: "Products Details",
+            _id,
+            productName,
+            productPrice,
+            productDetail,
+            productCategory,
+            productQuantity,
+            productPic,
+            message
+        })
+    })
+    .catch(err => console.log(`Error happened while adding product to cart  :${err}`));
+    
+})
+// Shopping Cart 
+
+router.get("/shoppingCart", (req, res) => {
+    
+});
 
 module.exports = router;
