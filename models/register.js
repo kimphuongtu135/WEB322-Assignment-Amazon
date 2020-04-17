@@ -20,6 +20,7 @@ const registerSchema = new Schema({
         type: String,
         required: true
     },
+    
     password:
     {
         type: String,
@@ -30,7 +31,11 @@ const registerSchema = new Schema({
         type: String,
         default: "User"
     },
-
+    arrayCart:
+    {
+        type: Array,
+        defaul:[]
+    },
     dateCreated:
     {
         type: Date,

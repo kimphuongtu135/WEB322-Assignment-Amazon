@@ -1,14 +1,13 @@
-
 <div class="bigDiv">
     {{#if productShow}}
-    
+
     {{#each productShow}}
     <div class="container-product">
 
-       
+
 
         <a href="/products/productDecs/{{this.id}}">
-        <img src="/images/{{this.productPic}}" alt="{{this.productName}}" width="200" height="200">
+            <img src="/images/{{this.productPic}}" alt="{{this.productName}}" width="200" height="200">
         </a>
 
 
@@ -18,7 +17,7 @@
             </p>
 
             <p>
-                <span class="bold"> Category: </span>{{this.productCategory}}
+                <span class="bold"> Quantity: </span>{{this.productQuantity}}
             </p>
 
             <p>
@@ -26,29 +25,27 @@
             </p>
 
             <p>
-                <span class="bold">Total Price $:</span> {{totalPrice}}
+                <span class="bold">Price $:</span> {{this.productPrice}}
             </p>
 
         </div>
-         <form method="POST" action="/profile/shoppingCart">
 
-            <label for="pquan">Total Price:</label>
-            <input type="number" name="totalPrice" id="totalPrice" value='{{totalPrice}}'>
-            <br><br>
-
-            <button type="submit"><i class="fa fa-shopping-cart" style="font-size:24px"></i>Place The Order</button>
-
-        </form>
 
     </div>
-    
+    {{/each}}
 
-         {{/each}}
+    <form method="POST" action="/products/profile/shoppingCart">
 
-   
+        <label for="totalPrice">Total Price (Included Tax):</label>
+        <input type="number" name="totalPrice" id="totalPrice" value='{{totalPrice}}'>
+        <br><br>
+
+        <button type="submit"><i class="fa fa-shopping-cart" style="font-size:24px"></i>Place The Order</button>
+
+    </form>
+
     {{else}}
-        <h2 class="noItem">There is no product in your Shopping Cart</h2>
-            
+    <h2 class="noItem">There is no product in your Shopping Cart</h2>
+
     {{/if}}
 </div>
- 

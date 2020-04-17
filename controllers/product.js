@@ -4,7 +4,7 @@ const productModel = require("../models/product");
 const isLogin = require("../middleware/auth");
 const productDBModel = require("../models/productData");
 const categoryDBModel = require("../models/categoryData");
-const cartDBModel = require("../models/cart");
+const registerModel = require("../models/register");
 const transferProduct = require("../models/product");
 const categoriesModel = require("../models/categories");
 const path = require("path");
@@ -326,41 +326,41 @@ router.get("/productDecs/:id", (req, res) => {
         })
         .catch(err => console.log(`Error happened while loading product to cart  :${err}`));
 })
+
 router.post("/productDecs/:id", isLogin, (req, res) => {
     const message = [];
     if (req.session.user.type != "Admin") {
 
-        productDBModel.findById(req.params.id)
-            .then((product) => {
-
+        registerModel.findById(req.session.user._id)
+            .then((user) => {
                 const custOrder = {
-                    userId: req.session.user._id,
                     itemId: req.params.id,
                     orderedQuantity: req.body.pquan
                 }
-                const cart = new cartDBModel(custOrder);
-                cart.save()
+                user.arrayCart.push(custOrder)
+                registerModel.updateOne({ _id: user._id }, {
+                    arrayCart: user.arrayCart
+                })
                     .then(() => {
-                        const { _id, productName, productPrice, productDetail, productCategory, productQuantity, productPic } = product;
-                        message.push("Your product is added to Cart")
-                        res.render("products/productDecs", {
-                            title: "Products Details",
-                            _id,
-                            productName,
-                            productPrice,
-                            productDetail,
-                            productCategory,
-                            productQuantity,
-                            productPic,
-                            orderedQuantity: req.body.pquan,
-                            message
-                        })
-
+                        productDBModel.findById(req.params.id)
+                            .then((product) => {
+                                const { _id, productName, productPrice, productDetail, productCategory, productQuantity, productPic } = product;
+                                message.push("Your product is added ")
+                                res.render("products/productDecs", {
+                                    title: "Products Details",
+                                    _id,
+                                    productName,
+                                    productPrice,
+                                    productDetail,
+                                    productCategory,
+                                    productQuantity,
+                                    productPic,
+                                    orderedQuantity: req.body.pquan,
+                                    message
+                                })
+                            })
+                            .catch(err => console.log(`Error happened while loading product to cart  :${err}`));
                     })
-                    .catch(err => {
-                        console.log(`Error occured while inserting data into database ${err}`);
-                    });
-
             })
             .catch(err => console.log(`Error happened while loading product to cart  :${err}`));
     }
@@ -386,123 +386,84 @@ router.post("/productDecs/:id", isLogin, (req, res) => {
     }
 })
 
+
 router.get("/profile/shoppingCart", isLogin, (req, res) => {
-
-    cartDBModel.find({ userId: req.session.user._id })
-        .then((custOrders) => {
-            const mapproductId = custOrders.map(item => item.itemId)
-
-
-            productDBModel.find({" _id":{"$in": mapproductId} })
-                .then((products) => {
-                    const mapProduct = products.map(product => {
-                        let totalPrice = 0;
-                        totalPrice +=product.productPrice * item.orderedQuantity; 
-                        console.log("totalprice",totalPrice)   
-                        console.log("quantity",item.orderedQuantity)
-                        for (let i = 0; i < mapproductId.length; i++) {
-                            
-                                console.log(totalPrice);
-                            if (product._id == mapproductId[i]) {
-                                return {
-                                    id: product._id,
-                                    productName: product.productName,
-                                    productPrice: product.productPrice,
-                                    productDetail: product.productDetail,
-                                    productCategory: product.productCategory,
-                                    productQuantity: product.productQuantity,
-                                    productPic: product.productPic,
+    if (req.session.user) {
+        let totalPrice = 0;
+        const temp = [];
+        let details = {};
+        registerModel.findOne({ _id: req.session.user._id })
+            .then((user) => {
+                productDBModel.find()
+                    .then((products) => {
+                        user.arrayCart.forEach(item => {
+                            products.forEach(product => {
+                                if (product._id == item.itemId) {
+                                    details = {
+                                        id: product._id,
+                                        productPrice: product.productPrice,
+                                        productName: product.productName,
+                                        productPic: product.productPic,
+                                        productDetail: product.productDetail,
+                                        productQuantity: item.orderedQuantity
+                                    }
+                                    totalPrice += (product.productPrice * item.orderedQuantity) * 1.13;
+                                    parseFloat(totalPrice).toFixed(2);
+                                    console.log(totalPrice);
+                                    temp.push(details);
                                 }
-                               
-                            } 
-                            
-                        }
-                    });
-                   // console.log(mapProduct);
-                    res.render("products/cart",
-                        {
-                            title: "Shopping Cart",
+                            })
+                        })
+                        res.render("products/cart",
+                            {
+                                title: "Shopping Cart",
+                                productShow: temp,
+                                totalPrice: totalPrice
+                            });
+                    })
+                    .catch(err => console.log(`Error happened while loading product to cart  :${err}`));
 
-                            productShow: mapProduct,
-                            totalPrice:totalPrice
-                        });
+            })
+            .catch(err => console.log(`Error happened while loading product to cart  :${err}`));
+    }
+    else {
+        res.redirect("/login");
+    }
+})
+
+router.post("/profile/shoppingCart", isLogin, (req, res) => {
+    console.log("runnn");
+    registerModel.updateOne({ _id: req.session.user._id }, {
+        arrayCart: []
+    })
+        .then(() => {
+            const sgMail = require('@sendgrid/mail');
+            sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
+            const msg = {
+                to: `${req.session.user.email}`,
+                from: 'kptustore@gmail.com',
+                subject: `Kptustore's Order Confirmation `,
+                html: `
+                                Dear ${req.session.user.firstName} ${req.session.user.lastName},
+                                Your KptuStore's order has been confirmed. Thank you for shopping with us!
+            `,
+            };
+            sgMail.send(msg)
+                .then(() => {
+                    console.log(`Order Confirmation sent`);
+                })
+                .catch(err => {
+                    console.log(`Error happened while sending email ${err}`);
+                });
+            res.render("general/userDashboard",
+                {
+                    title: "Profile",
 
                 })
-                .catch(err => console.log(`Error happened when pulling data from the database :${err}`));
 
         })
-        .catch(err => console.log(`Error happened while finding ID in cart database  :${err}`));
-});
+        .catch(err => console.log(`Error happened while loading product to cart  :${err}`));
 
-
-// let objFinal = {
-//     arrayFinal: []
-// }
-// router.post("/productDecs/:id", isLogin, (req, res) => {
-//     let cartItem = {};
-//     productDBModel.findById(req.params.id)
-//         .then((product) => {
-
-//             const { _id, productName, productPrice, productDetail, productCategory, productQuantity, productPic } = product;
-
-//             cartItem =
-//             {
-//                 _id, productName, productPrice, productDetail, productCategory, productQuantity, productPic,
-//                 orderedQuantity: req.body.pquan
-//             }
-//             // arrayCart.push(cartItem);
-
-//             objFinal.arrayFinal.push(cartItem);
-//             //console.log('áfter pushing caritem: ', objFinal.arrayFinal)
-//             // console.log('before: ', req.session.cart)
-//             req.session.cart = { ...objFinal };
-//             let totalPrice = 0;
-//             for (let i = 0; i < objFinal.arrayFinal.length; i++) {
-//                 totalPrice += Number(objFinal.arrayFinal[i].orderedQuantity) * objFinal.arrayFinal[i].productPrice;
-//                 objFinal.arrayFinal[i].productQuantity -= Number(objFinal.arrayFinal[i].orderedQuantity);
-
-//             productDBModel.updateOne({ _id: req.params.id }, objFinal.arrayFinal[i])
-//         .then(() => {
-//             req.session.cart.totalPrice = totalPrice;
-//             console.log("left product:",objFinal.arrayFinal[i].productQuantity );
-//             console.log("totalPrice:", req.session.cart.totalPrice );
-//             res.redirect("/products/profile");
-//             console.log("add cart successfull");
-
-//         })
-
-//         .catch(err => console.log(`Error with updating data from the database :${err}`));
-//     }
-//         })
-
-//         .catch(err => console.log(`Error happened while adding product to cart  :${err}`));
-
-// })
-// // Shopping Cart 
-// router.get("/profile/shoppingCart", isLogin, (req, res) => {
-//    // console.log('get shopping cart: ', req.session.cart)
-//     req.session.cart.arrayFinal.forEach((item) => {
-//         const itemShow = {
-//             id: item._id,
-//             productName: item.productName,
-//             productPrice: item.productPrice,
-//             productQuantity: item.productQuantity,
-//             productDetail: item.productDetail,
-//             productPic: item.productPic
-//         }
-//         const items = [];
-//         items.push(itemShow);
-//         console.log('item: ', itemShow);
-//         res.render("products/cart",
-//             {
-//                 title: "Shopping Cart",
-
-//                 productShow: items,
-//             });
-
-//     });
-
-// });
-
+})
 
 module.exports = router;
