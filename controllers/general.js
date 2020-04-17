@@ -234,7 +234,6 @@ router.post("/login", (req, res) => {
                             //Login successfully
                             if (isCorrect) {
                                 req.session.user = user;
-                                //authorization(req,res);
                                 res.redirect("/profile");
                             }
                             //password doesn't match
@@ -265,35 +264,6 @@ router.get("/logout",(req,res)=>{
 
     req.session.destroy();
     res.redirect("/login")
-});
-// Category router
-router.get("/products/:productCategory", (req, res) => {
-
-    productDBModel.find({ productCategory: req.params.productCategory })
-        .then((products) => {
-
-            const mapProduct = products.map(product => {
-                return {
-                    id: product._id,
-                    productName: product.productName,
-                    productPrice: product.productPrice,
-                    productDetail: product.productDetail,
-                    productCategory: product.productCategory,
-                    productQuantity: product.productQuantity,
-                    bestSeller: product.bestSeller,
-                    productPic: product.productPic
-                }
-            });
-
-
-            res.render("products/products",
-                {
-                    title: "Products",
-                    productShow: mapProduct,
-                })
-
-        })
-        .catch(err => console.log(`Error happened when pulling data from the database :${err}`));
 });
 
 

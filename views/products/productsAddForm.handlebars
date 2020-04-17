@@ -1,5 +1,6 @@
-
+   
 <div class="customer">
+    
      <form method="POST" action="/products/profile/add" enctype="multipart/form-data">
 
         <legend class="legend">Add Product</legend> <br>
@@ -32,7 +33,10 @@
 
         <label>File Upload</label>
         <input type="file" name="productPic" id="productPic"> 
-        <br><br>
+        <br>
+        {{#if errorMessage}}
+        <div class="errors"> {{errorMessage}}</div>
+        {{/if}} 
 
         <input class="button" type="submit" value="Add Product">
     </form>

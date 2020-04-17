@@ -419,6 +419,13 @@ main{
   .dropdown:hover .dropdown-content {display: block;}
   
 
+  .noItem{
+    color:red;
+    padding:0% 5%;
+
+    
+  }
+ 
   
 
   
