@@ -229,9 +229,6 @@ router.put("/updateProduct/:id", isLogin, (req, res) => {
         productQuantity: req.body.pquan,
         bestSeller: req.body.pbest
     }
-    if (product.bestSeller != "true") {
-        product.bestSeller = false;
-    }
     if (!req.files) {
         productDBModel.updateOne({ _id: req.params.id }, product)
             .then(() => {
@@ -289,26 +286,38 @@ router.delete("/deleteProduct/:id", (req, res) => {
 });
 //seaarch by keyword
 router.post("/search", (req, res) => {
-    productDBModel.find({ productName: new RegExp(req.body.search, 'i') }).lean()
-        .then((products) => {
-            const mapProduct = products.map(product => {
+    categoryDBModel.find()
+        .then((categories) => {
+            const mapCategories = categories.map(cate => {
                 return {
-                    id: product._id,
-                    productName: product.productName,
-                    productPrice: product.productPrice,
-                    productDetail: product.productDetail,
-                    productCategory: product.productCategory,
-                    productQuantity: product.productQuantity,
-                    bestSeller: product.bestSeller,
-                    productPic: product.productPic
+                    id: cate._id,
+                    categoryName: cate.categoryName,
+                    categoryPic: cate.categoryPic
                 }
             });
-            res.render("products/products", {
-                title: "Products",
-                productShow: mapProduct
-            });
+            productDBModel.find({ productName: new RegExp(req.body.search, 'i') }).lean()
+                .then((products) => {
+                    const mapProduct = products.map(product => {
+                        return {
+                            id: product._id,
+                            productName: product.productName,
+                            productPrice: product.productPrice,
+                            productDetail: product.productDetail,
+                            productCategory: product.productCategory,
+                            productQuantity: product.productQuantity,
+                            bestSeller: product.bestSeller,
+                            productPic: product.productPic
+                        }
+                    });
+                    res.render("products/products", {
+                        title: "Products",
+                        productShow: mapProduct,
+                        categoriesShow: mapCategories
+                    });
+                })
+                .catch(err => console.log(`Error happened when searching product: ${err}`));
         })
-        .catch(err => console.log(`Error happened when searching product: ${err}`));
+        .catch(err => console.log(`Error happened when pulling data from the database :${err}`));
 });
 
 // Searching product by categories
