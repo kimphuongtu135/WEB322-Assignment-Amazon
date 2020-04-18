@@ -4,8 +4,6 @@
     {{#each productShow}}
     <div class="container-product">
 
-
-
         <a href="/products/productDecs/{{this.id}}">
             <img src="/images/{{this.productPic}}" alt="{{this.productName}}" width="200" height="200">
         </a>
@@ -30,22 +28,23 @@
 
         </div>
 
-
     </div>
     {{/each}}
 
-    <form method="POST" action="/products/profile/shoppingCart">
+    <form class="cartform" method="POST" action="/products/profile/shoppingCart">
+        <p>
+            <span class="totalPrice">Total Price $ (Tax Included): </span>{{totalPrice}}
+        </p>
 
-        <label for="totalPrice">Total Price (Included Tax):</label>
-        <input type="number" name="totalPrice" id="totalPrice" value='{{totalPrice}}'>
-        <br><br>
 
-        <button type="submit"><i class="fa fa-shopping-cart" style="font-size:24px"></i>Place The Order</button>
+        <br>
+
+        <button class="cartbutton" type="submit"></i>Place The Order</button>
 
     </form>
 
     {{else}}
-    <h2 class="noItem">There is no product in your Shopping Cart</h2>
+    <h2 class="noItem">There is no product in your Cart</h2>
 
     {{/if}}
 </div>

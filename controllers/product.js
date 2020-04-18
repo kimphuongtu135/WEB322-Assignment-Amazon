@@ -118,52 +118,57 @@ router.get("/convertcate", (req, res) => {
 
 });
 router.post("/profile/add", (req, res) => {
-    const newProduct = {
-        productName: req.body.pname,
-        productPrice: req.body.pprice,
-        productDetail: req.body.pdetail,
-        productCategory: req.body.pcate,
-        productQuantity: req.body.pquan,
-        bestSeller: req.body.pbest === 'true' ? true : false,
-        productPic: req.files.productPic.name
+    // if image is not supported, error displayed
+    const errorMessage = [];
+    if (!req.files) {
+        errorMessage.push("You need to upload image!");
+        res.render("products/productsAddForm",
+            {
+                title: "Add Products",
+                errorMessage
+            })
     }
-
-    const product = new productDBModel(newProduct);
-    product.save()
-        .then((product) => {
-            // if image is not supported, error displayed
-            const errorMessage = [];
-            if (!req.files.productPic || !(path.parse(req.files.productPic.name).ext === ".png") || !(path.parse(req.files.productPic.name).ext === ".jgp") || !(path.parse(req.files.productPic.name).ext === ".gif")) {
-                errorMessage.push("Your file type is incorrect!");
-
-                res.render("products/productsAddForm",
-                    {
-                        title: "Add Products",
-                        pname: req.body.pname,
-                        pprice: req.body.pprice,
-                        pdetail: req.body.pdetail,
-                        pcate: req.body.pcate,
-                        pquan: req.body.pquan,
-                        errorMessage,
-                    })
+    else {
+        if (!req.files.productPic || !(path.parse(req.files.productPic.name).ext === ".png" || path.parse(req.files.productPic.name).ext === ".jpg" || path.parse(req.files.productPic.name).ext === ".JPG" || path.parse(req.files.productPic.name).ext === ".gif")) {
+            errorMessage.push("Your file type is incorrect!");
+            res.render("products/productsAddForm",
+                {
+                    title: "Add Products",
+                    pname: req.body.pname,
+                    pprice: req.body.pprice,
+                    pdetail: req.body.pdetail,
+                    pcate: req.body.pcate,
+                    pquan: req.body.pquan,
+                    errorMessage,
+                })
+        }
+        else {
+            const newProduct = {
+                productName: req.body.pname,
+                productPrice: req.body.pprice,
+                productDetail: req.body.pdetail,
+                productCategory: req.body.pcate,
+                productQuantity: req.body.pquan,
+                bestSeller: req.body.pbest === 'true' ? true : false,
+                productPic: req.files.productPic.name
             }
-            else {
-                req.files.productPic.name = `pic_${product._id}${req.files.productPic.name}`;
-                console.log(req.files.productPic.name)
-                req.files.productPic.mv(`public/images/${req.files.productPic.name}`)
-                    .then(() => {
-                        console.log(req.files.productPic.name)
-                        productDBModel.updateOne({ _id: product._id }, {
-                            productPic: req.files.productPic.name
-                        })
-                            .then(() => {
-                                res.redirect("/profile")
+            const product = new productDBModel(newProduct);
+            product.save()
+                .then((product) => {
+                    req.files.productPic.name = `pic_${product._id}${req.files.productPic.name}`;
+                    req.files.productPic.mv(`public/images/${req.files.productPic.name}`)
+                        .then(() => {
+                            productDBModel.updateOne({ _id: product._id }, {
+                                productPic: req.files.productPic.name
                             })
-                    })
-            }
-        })
-        .catch(err => console.log(`Error happened when inserting into the database :${err}`));
-
+                                .then(() => {
+                                    res.redirect("/profile")
+                                })
+                        })
+                })
+                .catch(err => console.log(`Error happened when inserting into the database :${err}`));
+        }
+    }
 });
 
 //Only admin can view all product
@@ -197,10 +202,9 @@ router.get("/profile/viewProduct", isLogin, (req, res) => {
 
 
 router.get("/editProduct/:id", isLogin, (req, res) => {
-
     productDBModel.findById(req.params.id)
         .then((product) => {
-            const { _id, productName, productPrice, productDetail, productCategory, productQuantity } = product;
+            const { _id, productName, productPrice, productDetail, productCategory, productQuantity, bestSeller } = product;
             res.render("products/productsEditForm", {
                 title: "Edit Products",
                 _id,
@@ -208,27 +212,70 @@ router.get("/editProduct/:id", isLogin, (req, res) => {
                 productPrice,
                 productDetail,
                 productCategory,
-                productQuantity
+                productQuantity,
+                bestSeller
             })
-
         })
         .catch(err => console.log(`Error  editing from the database :${err}`));
 })
 
 router.put("/updateProduct/:id", isLogin, (req, res) => {
-
+    const errorMessage = [];
     const product = {
         productName: req.body.pname,
         productPrice: req.body.pprice,
         productDetail: req.body.pdetail,
         productCategory: req.body.pcate,
-        productQuantity: req.body.pquan
+        productQuantity: req.body.pquan,
+        bestSeller: req.body.pbest
     }
-    productDBModel.updateOne({ _id: req.params.id }, product)
-        .then(() => {
-            res.redirect("/products/profile/viewProduct");
-        })
-        .catch(err => console.log(`Error with updating data from the database :${err}`));
+    if (product.bestSeller != "true") {
+        product.bestSeller = false;
+    }
+    if (!req.files) {
+        productDBModel.updateOne({ _id: req.params.id }, product)
+            .then(() => {
+                res.redirect("/products/profile/viewProduct");
+            })
+            .catch(err => console.log(`Error with updating data from the database :${err}`));
+    }
+    else if (!(path.parse(req.files.productPic.name).ext === ".png" || path.parse(req.files.productPic.name).ext === ".jpg" || path.parse(req.files.productPic.name).ext === ".JPG" || path.parse(req.files.productPic.name).ext === ".gif")) {
+        errorMessage.push("Your file type is incorrect!");
+        productDBModel.findById(req.params.id)
+            .then((product) => {
+                const { _id, productName, productPrice, productDetail, productCategory, productQuantity, bestSeller } = product;
+                res.render("products/productsEditForm", {
+                    title: "Edit Products",
+                    _id,
+                    productName,
+                    productPrice,
+                    productDetail,
+                    productCategory,
+                    productQuantity,
+                    bestSeller,
+                    errorMessage
+                })
+            })
+            .catch(err => console.log(`Error  editing from the database :${err}`));
+    }
+    else {
+        productDBModel.updateOne({ _id: req.params.id }, product)
+            .then(() => {
+
+                req.files.productPic.name = `pic_${product._id}${req.files.productPic.name}`;
+                req.files.productPic.mv(`public/images/${req.files.productPic.name}`)
+                    .then(() => {
+                        productDBModel.updateOne({ _id: req.params.id }, {
+                            productPic: req.files.productPic.name
+                        })
+                            .then(() => {
+                                res.redirect("/products/profile/viewProduct");
+                            })
+                    })
+
+            })
+            .catch(err => console.log(`Error with updating data from the database :${err}`));
+    }
 });
 
 
@@ -320,6 +367,7 @@ router.get("/productDecs/:id", (req, res) => {
                 productCategory,
                 productQuantity,
                 productPic,
+                productAvailable: productQuantity > 0,
                 message
             })
 
@@ -330,37 +378,44 @@ router.get("/productDecs/:id", (req, res) => {
 router.post("/productDecs/:id", isLogin, (req, res) => {
     const message = [];
     if (req.session.user.type != "Admin") {
-
-        registerModel.findById(req.session.user._id)
-            .then((user) => {
+        productDBModel.findById(req.params.id)
+            .then((product) => {
                 const custOrder = {
                     itemId: req.params.id,
                     orderedQuantity: req.body.pquan
                 }
-                user.arrayCart.push(custOrder)
-                registerModel.updateOne({ _id: user._id }, {
-                    arrayCart: user.arrayCart
-                })
-                    .then(() => {
-                        productDBModel.findById(req.params.id)
-                            .then((product) => {
-                                const { _id, productName, productPrice, productDetail, productCategory, productQuantity, productPic } = product;
-                                message.push("Your product is added ")
-                                res.render("products/productDecs", {
-                                    title: "Products Details",
-                                    _id,
-                                    productName,
-                                    productPrice,
-                                    productDetail,
-                                    productCategory,
-                                    productQuantity,
-                                    productPic,
-                                    orderedQuantity: req.body.pquan,
-                                    message
-                                })
+                if (custOrder.orderedQuantity < product.productQuantity) {
+                    message.push("Your product is added to cart. Please check Shopping Cart under Profile ")
+                    res.redirect("/profile");
+                    registerModel.findById(req.session.user._id)
+                        .then((user) => {
+                            user.arrayCart.push(custOrder)
+                            registerModel.updateOne({ _id: user._id }, {
+                                arrayCart: user.arrayCart
                             })
-                            .catch(err => console.log(`Error happened while loading product to cart  :${err}`));
+                                .then(() => {
+                                    console.log("Add to arrayCart successfully");
+                                })
+                                .catch(err => console.log(`Error happened while loading product to cart  :${err}`));
+                        })
+                }
+                else {
+                    const { _id, productName, productPrice, productDetail, productCategory, productQuantity, productPic } = product;
+                    message.push("Sorry! Our current stock is not available ")
+                    res.render("products/productDecs", {
+                        title: "Products Details",
+                        _id,
+                        productName,
+                        productPrice,
+                        productDetail,
+                        productCategory,
+                        productQuantity,
+                        productPic,
+                        orderedQuantity: req.body.pquan,
+                        productAvailable: productQuantity > 0,
+                        message
                     })
+                }
             })
             .catch(err => console.log(`Error happened while loading product to cart  :${err}`));
     }
@@ -388,7 +443,7 @@ router.post("/productDecs/:id", isLogin, (req, res) => {
 
 
 router.get("/profile/shoppingCart", isLogin, (req, res) => {
-    if (req.session.user) {
+    if (req.session.user.type != "Admin") {
         let totalPrice = 0;
         const temp = [];
         let details = {};
@@ -405,11 +460,10 @@ router.get("/profile/shoppingCart", isLogin, (req, res) => {
                                         productName: product.productName,
                                         productPic: product.productPic,
                                         productDetail: product.productDetail,
-                                        productQuantity: item.orderedQuantity
+                                        productQuantity: item.orderedQuantity,
                                     }
-                                    totalPrice += (product.productPrice * item.orderedQuantity) * 1.13;
-                                    parseFloat(totalPrice).toFixed(2);
-                                    console.log(totalPrice);
+                                    totalPrice += (product.productPrice * item.orderedQuantity) + (product.productPrice * item.orderedQuantity) * 0.13;
+                                    totalPrice.toFixed(2);
                                     temp.push(details);
                                 }
                             })
@@ -422,7 +476,6 @@ router.get("/profile/shoppingCart", isLogin, (req, res) => {
                             });
                     })
                     .catch(err => console.log(`Error happened while loading product to cart  :${err}`));
-
             })
             .catch(err => console.log(`Error happened while loading product to cart  :${err}`));
     }
@@ -432,35 +485,68 @@ router.get("/profile/shoppingCart", isLogin, (req, res) => {
 })
 
 router.post("/profile/shoppingCart", isLogin, (req, res) => {
-    console.log("runnn");
-    registerModel.updateOne({ _id: req.session.user._id }, {
-        arrayCart: []
-    })
-        .then(() => {
-            const sgMail = require('@sendgrid/mail');
-            sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
-            const msg = {
-                to: `${req.session.user.email}`,
-                from: 'kptustore@gmail.com',
-                subject: `Kptustore's Order Confirmation `,
-                html: `
+    let totalPrice = 0;
+    const temp = [];
+    let details = {};
+    registerModel.findOne({ _id: req.session.user._id })
+        .then((user) => {
+            productDBModel.find()
+                .then((products) => {
+                    user.arrayCart.forEach(item => {
+                        products.forEach(product => {
+                            if (product._id == item.itemId) {
+                                details = {
+                                    id: product._id,
+                                    productPrice: product.productPrice,
+                                    productName: product.productName,
+                                    productPic: product.productPic,
+                                    productDetail: product.productDetail,
+                                    productQuantity: item.orderedQuantity,
+                                }
+                                totalPrice += (product.productPrice * item.orderedQuantity) + (product.productPrice * item.orderedQuantity) * 0.13;
+                                totalPrice.toFixed(2);
+                                temp.push(details);
+                            }
+                        })
+                    })
+                    let emailBody = "";
+                    emailBody += "Order Sumary:<br><br>"
+                        + temp.map(item => { return "Item Name: " + item.productName + "<br>Quantity: " + item.productQuantity })
+                        + "\nTotal Price: " + totalPrice + "$<br><br>";
+
+                    const sgMail = require('@sendgrid/mail');
+                    sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
+                    const msg = {
+                        to: `${req.session.user.email}`,
+                        from: 'kptustore@gmail.com',
+                        subject: `Kptustore's Order onfirmation `,
+                        html: `
                                 Dear ${req.session.user.firstName} ${req.session.user.lastName},
-                                Your KptuStore's order has been confirmed. Thank you for shopping with us!
-            `,
-            };
-            sgMail.send(msg)
-                .then(() => {
-                    console.log(`Order Confirmation sent`);
-                })
-                .catch(err => {
-                    console.log(`Error happened while sending email ${err}`);
-                });
-            res.render("general/userDashboard",
-                {
-                    title: "Profile",
+                                Your KptuStore's order has been confirmed. 
+                                ${emailBody}
+                                Thank you for shopping with us!
+                                `,
+                    };
 
+                    sgMail.send(msg)
+                        .then(() => {
+                            registerModel.updateOne({ _id: req.session.user._id }, {
+                                arrayCart: []
+                            })
+                                .then(() => {
+                                    console.log(`Order Confirmation sent`);
+                                })
+                                .catch(err => {
+                                    console.log(`Error happened while sending email ${err}`);
+                                });
+                            res.render("general/userDashboard",
+                                {
+                                    title: "Profile",
+                                })
+                        })
+                        .catch(err => console.log(`Error happened while loading product to cart  :${err}`));
                 })
-
+                .catch(err => console.log(`Error happened while loading product to cart  :${err}`));
         })
         .catch(err => console.log(`Error happened while loading product to cart  :${err}`));
 

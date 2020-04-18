@@ -7,7 +7,6 @@
     <img src="/images/{{this.productPic}}" alt="{{this.productName}}" width="200" height="200">
 
 
-
     <div class="productInfor">
         <p>
             <span class="bold"> Name:</span> {{this.productName}}
@@ -24,21 +23,28 @@
         <p>
             <span class="bold">Price $:</span> {{this.productPrice}}
         </p>
+        {{#if productAvailable}}
+        <p>
+            <span id="in">In Stock</span>
+        </p>
+        {{else}}
+        <p>
+            <span id="out">Out Of Stock</span>
+        </p>
+        {{/if}}
+        <form class="desform" method="POST" action="/products/productDecs/{{_id}}">
 
-
-        <form method="POST" action="/products/productDecs/{{_id}}">
-
-            <label for="pquan">Product Quantity:</label>
+            <span class="bold">Product Quantity: </span>
             <input type="number" name="pquan" id="pquan" value="1">
             <br><br>
 
-            <button type="submit"><i class="fa fa-shopping-cart" style="font-size:24px"></i>Add to Cart</button>
+            <button class="desbutton" type="submit"></i>Add to Cart</button>
 
         </form>
 
 
         {{#if message}}
-            <p> {{message}}</p> 
+        <p class="err"> {{message}}</p>
         {{/if}}
     </div>
 

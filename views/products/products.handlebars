@@ -1,23 +1,22 @@
-
 <div class="bigDiv">
-    
-<div class="dropdown">
-         <form action="/products/search" method="POST">
-                 
-                <input type="text" placeholder="Search.." name="search">
-                <button type="submit"><i class="fa fa-search"></i></button>
-               
-            </form>
+
+    <div class="dropdown">
+        <form class="dropform" action="/products/search" method="POST">
+
+            <input type="text" placeholder="What are you looking for ?" name="search">
+            <button type="submit"><i class="fa fa-search"></i></button>
+
+        </form>
 
         <button class="dropbtn">Catagories</button>
         <div class="dropdown-content">
             {{#each categoriesShow}}
             <a href="/products/{{this.categoryName}}">{{this.categoryName}}</a>
-            {{/each}}   
+            {{/each}}
         </div>
-          
+
     </div>
-    
+
     {{#each productShow}}
     <div class="container-product">
 
@@ -27,7 +26,7 @@
 
 
         <a href="/products/productDecs/{{this.id}}">
-        <img src="/images/{{this.productPic}}" alt="{{this.productName}}" width="200" height="200">
+            <img src="/images/{{this.productPic}}" alt="{{this.productName}}" width="200" height="200">
         </a>
 
 
@@ -50,7 +49,7 @@
         </div>
 
     </div>
-    
+
 
     {{/each}}
 
